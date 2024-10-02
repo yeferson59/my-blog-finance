@@ -1,0 +1,79 @@
+DROP TABLE IF EXISTS session;
+DROP TABLE IF EXISTS email_verification_code;
+DROP TABLE IF EXISTS oauth_account;
+DROP TABLE IF EXISTS comment;
+DROP TABLE IF EXISTS post;
+DROP TABLE IF EXISTS category;
+DROP TABLE IF EXISTS user;
+
+CREATE TABLE user (
+    id TEXT PRIMARY KEY NOT NULL,
+    username TEXT,
+    email TEXT UNIQUE,
+    password_hash TEXT,
+    email_verified INTEGER DEFAULT 0, -- INTEGER instead of BOOLEAN
+    image TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE session (
+    id TEXT PRIMARY KEY NOT NULL,
+    expires_at INTEGER NOT NULL,
+    user_id TEXT NOT NULL,
+    CONSTRAINT fk_user_id_session FOREIGN KEY(user_id) REFERENCES user(id)
+);
+
+CREATE TABLE email_verification_code (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    code TEXT,
+    user_id TEXT NOT NULL,
+    email TEXT,
+    expires_at DATETIME,
+    CONSTRAINT fk_user_id_email_verification_code FOREIGN KEY(user_id) REFERENCES user(id)
+);
+
+CREATE TABLE oauth_account (
+    provider_id TEXT NOT NULL,
+    provider_user_id TEXT NOT NULL,
+    user_id TEXT NOT NULL,
+    PRIMARY KEY(provider_id, provider_user_id),
+    CONSTRAINT fk_user_id_oauth_account FOREIGN KEY (user_id) REFERENCES user(id)
+);
+
+CREATE TABLE category (
+    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    name TEXT NOT NULL,
+    description TEXT NOT NULL
+);
+
+CREATE TABLE post (
+    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    category_id INTEGER NOT NULL, -- Renamed to category_id
+    title TEXT UNIQUE NOT NULL,
+    slug TEXT UNIQUE NOT NULL,
+    created_at DATETIME,
+    CONSTRAINT fk_category_id_post FOREIGN KEY(category_id) REFERENCES category(id)
+);
+
+CREATE TABLE comment (
+    id TEXT PRIMARY KEY NOT NULL,
+    post_id INTEGER NOT NULL,
+    user_id TEXT NOT NULL,
+    content TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME,
+    CONSTRAINT fk_user_id_comment FOREIGN KEY(user_id) REFERENCES user(id),
+    CONSTRAINT fk_post_id_comment FOREIGN KEY(post_id) REFERENCES post(id)
+);
+
+INSERT INTO category(name, description) VALUES('Finanzas', 'son un campo de estudio y actividad que se enfoca en la gestión, creación y análisis de dinero, activos y recursos económicos. Abarcan la planificación, inversión, obtención y asignación de recursos financieros con el objetivo de maximizar el valor para individuos, empresas o gobiernos. Las finanzas incluyen diversas disciplinas, como las finanzas personales, corporativas, públicas, la banca, los mercados de capitales, el análisis de riesgos y la inversión. En general, se encargan de cómo se obtienen y gestionan los recursos monetarios para lograr metas específicas, como el crecimiento económico, la creación de riqueza o la estabilidad financiera.');
+INSERT INTO category(name, description) VALUES('Tecnología', 'es el conjunto de conocimientos, técnicas, herramientas y procesos utilizados para desarrollar, diseñar y mejorar productos o servicios que resuelven problemas humanos o mejoran la calidad de vida. Abarca una amplia gama de disciplinas, desde la ingeniería, la informática y la robótica hasta la biotecnología y la inteligencia artificial. En el contexto moderno, la tecnología está íntimamente relacionada con el desarrollo y uso de dispositivos digitales, software, sistemas de comunicación y automatización, lo que permite optimizar procesos, generar innovación y transformar sectores económicos como la salud, la educación y las finanzas.');
+
+INSERT INTO post(category_id, title, slug, created_at) VALUES(2, '¿Cómo empezar en la programación?', 'como-empezar-en-la-programacion', '2024-05-03');
+INSERT INTO post(category_id, title, slug, created_at) VALUES(1, '¿Es importante las finanzas?', 'es-importante-las-finanzas', '2024-03-26');
+INSERT INTO post(category_id, title, slug, created_at) VALUES(1, 'Introduccion', 'introduccion', '2024-03-25');
+INSERT INTO post(category_id, title, slug, created_at) VALUES(1, 'La mentalidad que tienen las personas cuando empiezan a invertir', 'la-mentalidad-que-tienen-las-personas-cuando-empiezan-a-invertir', '2024-04-14');
+INSERT INTO post(category_id, title, slug, created_at) VALUES(1, '¿Mercado de valores: ¿Qué sucedió esta semana?', 'lo-nuevo-en-el-mercado', '2024-04-27');
+INSERT INTO post(category_id, title, slug, created_at) VALUES(1, 'Lo que debes saber de la inversión.', 'lo-que-debes-saber-de-la-inversion', '2024-04-01');
+INSERT INTO post(category_id, title, slug, created_at) VALUES(1, '¿Qué se le está sucediendo al dolar?', 'que-esta-sucediendo-con-el-peso-colombiano', '2024-08-04');
+INSERT INTO post(category_id, title, slug, created_at) VALUES(1, '¿Qué sucederá con las tasas de interés en el mundo?', 'que-sucedera-con-las-tasas-de-interes-en-el-mundo', '2024-06-21');
