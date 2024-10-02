@@ -1,0 +1,31 @@
+---
+import LoginForm from './LoginForm.astro';
+import RegisterForm  from './RegisterForm.astro';
+import PasswordRecoveryForm from './PasswordRecoveryForm.astro';
+
+type AuthView = 'login' | 'register' | 'recovery';
+
+interface Props {
+    view: AuthView
+}
+
+const { view } = Astro.props
+
+function handlePasswordRecovery(email: string): void {
+   throw new Error('Function not implemented.');
+}
+---
+
+<div class="w-full max-w-md mx-auto">
+  {view === 'login' && (
+    <LoginForm />
+  )}
+  {view === 'register' && (
+    <RegisterForm />
+  )}
+  {view === 'recovery' && (
+    <PasswordRecoveryForm
+      onPasswordRecovery={handlePasswordRecovery}
+    />
+  )}
+</div>
