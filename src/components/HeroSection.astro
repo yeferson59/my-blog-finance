@@ -1,0 +1,23 @@
+---
+import { Button } from "@/components/ui/button";
+import { Icons } from "@/components/ui/icons";
+---
+
+<section id="inicio" class="w-full py-12 md:py-24 lg:py-32 xl:py-48 bg-gradient-to-br from-primary-100 to-secondary-100 dark:from-primary-900 dark:to-secondary-900">
+  <div class="container px-4 md:px-6">
+    <div class="flex flex-col items-center space-y-4 text-center">
+      <h1 class="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none text-primary-800 dark:text-primary-200">
+        Bienvenido a TechFin Blog
+      </h1>
+      <p class="mx-auto max-w-[700px] text-gray-700 md:text-xl dark:text-gray-300">
+        Tu fuente de información sobre tecnología y finanzas. Descubre las últimas tendencias y consejos para tu éxito financiero y tecnológico.
+      </p>
+      <Button asChild>
+        <a href="#featured-articles" class="flex flex-col justify-center items-center">
+          Ver Últimos Artículos
+          <Icons.arrowRight className="ml-2 h-4 w-4" />
+        </a>
+      </Button>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,31 @@
+---
+import { Button } from "@/components/ui/button";
+import { Image } from "astro:assets";
+import { getCollection } from 'astro:content';
+
+const allFinancePosts = await getCollection('blog', ({ data }) => {
+  return data.category === 'Finanzas' && data.featured;
+});
+const financePosts = allFinancePosts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf()).slice(0, 3) 
+---
+
+<section id="finanzas" class="w-full py-12 md:py-24 lg:py-32 bg-gray-100 dark:bg-gray-900">
+  <div class="container px-4 md:px-6">
+    <h2 class="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl text-center mb-8 text-primary-800 dark:text-primary-200">
+      Finanzas
+    </h2>
+    <div class="grid gap-6 lg:grid-cols-3">
+      {financePosts.map(post => (
+        <div class="rounded-lg border bg-card text-card-foreground shadow-sm">
+          <Image src={post.data.cover} alt={post.data.title} class="w-full h-48 object-cover rounded-t-lg" />
+          <div class="p-4">
+            <h3 class="text-lg font-bold">{post.data.title}</h3>
+            <a href={`/blog/post/${post.slug}`} class="mt-2 inline-block">
+              <Button variant="outline">Leer más</Button>
+            </a>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
