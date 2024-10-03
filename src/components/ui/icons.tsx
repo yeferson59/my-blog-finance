@@ -9,7 +9,9 @@ import {
   Mail,
   LogOut,
   LogIn,
-  ArrowRight
+  ArrowRight,
+  Menu,
+  X
 } from "lucide-react"
 
 export type Icon = React.ComponentType<LucideProps>
@@ -22,5 +24,7 @@ export const Icons = {
   google: Mail, // Usamos Mail como alternativa para Google
   logOut: LogOut,
   logIn: LogIn,
-  arrowRight: ArrowRight
+  arrowRight: ArrowRight,
+  menu: Menu,
+  x: X
 }

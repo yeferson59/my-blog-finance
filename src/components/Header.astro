@@ -4,13 +4,14 @@ import { Button } from "@/components/ui/button";
 import { Icons } from "@/components/ui/icons";
 import SignOut from './SignOut';
 import Newsletter from './Newsletter';
+import MobileMenu from './MobileMenu';
 
 // Asume que tienes una forma de verificar si el usuario está autenticado
 const isAuthenticated = Astro.locals.user // Reemplaza esto con tu lógica real de autenticación
 ---
 
-<header class="w-full bg-white dark:bg-gray-800 shadow-sm">
-	<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+<header class="sticky top-0 z-50 w-full bg-white dark:bg-gray-800 shadow-sm">
+	<div class="container mx-auto px-4 sm:px-6 lg:px-8">
 		<div class="flex justify-between items-center py-4">
 			<a class="flex items-center justify-center" href="/">
 				<svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-secondary-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -19,28 +20,29 @@ const isAuthenticated = Astro.locals.user // Reemplaza esto con tu lógica real 
 				<svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 ml-2 text-primary-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
 				</svg>
-				<span class="ml-2 text-2xl font-bold text-gray-900 dark:text-white">TechFin Blog</span>
+				<span class="ml-2 text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">TechFin Blog</span>
 			</a>
-			<nav class="hidden md:flex gap-6">
+			
+			<nav class="hidden lg:flex items-center space-x-6">
 				<a class="text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-primary-500 dark:hover:text-primary-400" href="/#inicio">Inicio</a>
 				<a class="text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-primary-500 dark:hover:text-primary-400" href="/#tecnologia">Tecnología</a>
 				<a class="text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-primary-500 dark:hover:text-primary-400" href="/#finanzas">Finanzas</a>
 				<a class="text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-primary-500 dark:hover:text-primary-400" href="/sobre-nosotros">Sobre Nosotros</a>
 				<a class="text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-primary-500 dark:hover:text-primary-400" href="/blog">Posts</a>
-			</nav>
-			<div class="flex items-center gap-4">
 				<Newsletter client:load />
 				{isAuthenticated ? (
 					<SignOut client:load />
 				) : (
 					<a href="/auth/signin">
-						<Button variant="outline">
+						<Button variant="outline" size="sm">
 							<Icons.logIn className="mr-2 h-4 w-4" />
 							Iniciar Sesión
 						</Button>
 					</a>
 				)}
-			</div>
+			</nav>
+
+			<MobileMenu client:load isAuthenticated={isAuthenticated} />
 		</div>
 	</div>
 </header>
