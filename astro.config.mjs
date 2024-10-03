@@ -14,11 +14,9 @@ export default defineConfig({
   integrations: [tailwind({
     applyBaseStyles: false,
   }), react(), mdx()],
-
   security: {
     checkOrigin: true
   },
-
   output: 'server',
   adapter: vercel()
 });
