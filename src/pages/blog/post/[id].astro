@@ -31,7 +31,7 @@ const { Content } = await render(post)
         {post.data.date.toLocaleDateString()}
       </time>
     </div>
-    <Image src={post.data.cover} alt={post.data.title} class="w-full rounded-md mb-4" transition:name={`img-${post.slug}`} inferSize={true} />
+    <Image src={post.data.cover} alt={post.data.title} class="w-full rounded-md mb-4" transition:name={`img-${post.slug}`} />
     <div class="prose dark:prose-invert max-w-none">
       <Content />
     </div>
