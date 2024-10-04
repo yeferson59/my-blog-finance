@@ -27,9 +27,11 @@ const isAuthenticated = Astro.locals.user // Reemplaza esto con tu lógica real 
 				<a class="text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-primary-500 dark:hover:text-primary-400" href="/#inicio">Inicio</a>
 				<a class="text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-primary-500 dark:hover:text-primary-400" href="/#tecnologia">Tecnología</a>
 				<a class="text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-primary-500 dark:hover:text-primary-400" href="/#finanzas">Finanzas</a>
-				<a class="text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-primary-500 dark:hover:text-primary-400" href="/sobre-nosotros">Sobre Nosotros</a>
+				<a class="text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-primary-500 dark:hover:text-primary-400" href="/about">Sobre Nosotros</a>
 				<a class="text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-primary-500 dark:hover:text-primary-400" href="/blog">Posts</a>
-				<Newsletter client:load />
+				<div>
+					<Newsletter client:load />
+				</div>
 				{isAuthenticated ? (
 					<SignOut client:load />
 				) : (
