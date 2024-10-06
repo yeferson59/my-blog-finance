@@ -1,11 +1,24 @@
 ---
 import { Button } from "@/components/ui/button";
+import type Post from "@/interfaces/post";
+import fetchApi from "@/lib/strapi";
 import { Image } from "astro:assets";
-import { getCollection } from 'astro:content';
 
-const allFeaturedPosts = await getCollection('blog', ({ data }) => data.featured);
-const featuredPosts = allFeaturedPosts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
-const allTags = await getCollection('tags')
+let allPosts: Post[] = [];
+
+try {
+  allPosts = await fetchApi<Post[]>({
+    endpoint: 'posts?fields[0]=title&fields[1]=description&&fields[2]=pubDate&fields[3]=featured&fields[4]=tags&fields[5]=slug&populate[image][fields][0]=url',
+    wrappedByKey: 'data',
+    method: 'GET',
+  });
+} catch (error) {
+  console.error("Error al obtener los artículos:", error);
+}
+
+const allFeaturedPosts = allPosts.filter(post => post.featured === true)
+const featuredPosts = allFeaturedPosts.sort((a, b) => new Date(b.pubDate).valueOf() - new Date(a.pubDate).valueOf())
+const path = import.meta.env.STRAPI_URL;
 ---
 
 <section id="featured-articles" class="w-full py-12 md:py-24 lg:py-32 bg-secondary-100 dark:bg-secondary-900">
@@ -14,26 +27,18 @@ const allTags = await getCollection('tags')
       Artículos Destacados
     </h2>
     <div class="grid gap-6 lg:grid-cols-3">
-      {featuredPosts.map(({data, slug}) => (
+      {featuredPosts.map(({image: {url}, title, slug, description, tags}) => (
         <div class="rounded-lg border bg-card text-card-foreground shadow-sm">
-          <Image src={data.cover} alt={data.title} class="w-full h-48 object-cover rounded-t-lg"/>
+          <Image src={path+url as any} alt={title} class="w-full h-48 object-cover rounded-t-lg" inferSize={true} />
           <div class="p-4">
-            <h3 class="text-lg font-bold">{data.title}</h3>
-            <p class="text-sm text-gray-500 dark:text-gray-400">{data.summary}</p>
+            <h3 class="text-lg font-bold">{title}</h3>
+            <p class="text-sm text-gray-500 dark:text-gray-400">{description}</p>
             <div class="flex justify-between items-center">
               <a href={`/blog/post/${slug}`} class="mt-2 inline-block">
                 <Button variant="outline">Leer más</Button>
               </a>
               <div class="gap-2">
-                {
-                  data.tags.map(tag => (
-                    allTags.filter(tags => tags.slug === tag.slug).map(({data}) => (
-                      <Button className="text-sm font-bold bg-primary-600 hover:bg-primary-700 text-white py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                        {data.name}
-                      </Button>
-                    ))
-                  ))
-                }
+                <Button>{tags}</Button>
               </div>
             </div>
           </div>
