@@ -1,28 +1,61 @@
 ---
 // src/pages/post/[id].astro
-import { CommentSection } from '@/components/CommentSection';
-import { getCollection, render } from 'astro:content';
-import { Image } from 'astro:assets';
 import PostLayout from '@/layouts/PostLayout.astro';
+import fetchApi from '@/lib/strapi';
+import type Post from '@/interfaces/post';
+import { BlocksRenderer } from '@strapi/blocks-react-renderer';
+import type Header from '@/interfaces/header';
+
 const { id } = Astro.params;
-const user = Astro.locals.user
-const posts = await getCollection('blog')
-const post = posts.find(post => post.slug === id)
-if(!post) return
-const authors = await getCollection('authors', ({slug}) => {
-  return post.data.authors.filter(author => author.slug === slug)
-})
-const { Content } = await render(post)
+const user = Astro.locals.user;
+
+const post = await fetchApi<Post>({
+  endpoint: 'posts?populate[image][fields][0]=url&populate[authors][populate][avatar][fields][0]=url',
+  wrappedByKey: 'data',
+  wrappedByList: true,
+  query: {
+    'filters[slug][$eq]': id || '',
+  },
+  method: 'GET'
+});
+
+if (!post) {
+  return Astro.redirect('/404');
+}
+
+const { slug, title, content, image, updatedAt, pubDate, authors } = post;
+const { url: postImageUrl } = image;
+
+const path = import.meta.env.STRAPI_URL;
+
+interface StrapiBlock {
+  id: string;
+  type: string;
+  children?: { text: string }[];
+  level?: number;
+  // Añade más propiedades según sea necesario
+}
+
+// Extraer los encabezados para la tabla de contenidos
+const headers: Header[] = content
+  .filter((block: StrapiBlock): block is StrapiBlock & { type: 'heading', level: number } => 
+    block.type === 'heading' && typeof block.level === 'number')
+  .map((block: StrapiBlock & { type: 'heading', level: number }) => ({
+    id: block.id,
+    text: block.children?.[0]?.text ?? '',
+    level: block.level
+  }));
 ---
 
-<PostLayout title={post.data.title} pubDate={post.data.date} heroImage={post.data.cover} slug={post.slug} authors={authors} >
-  <article class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-    <div class="mb-4 flex gap-2">
-      
-    </div>
-    <div class="prose dark:prose-invert max-w-none">
-      <Content />
-    </div>
-    <CommentSection client:load articleId={post.slug} user={user}/>
-  </article>
+<PostLayout
+  title={title} 
+  pubDate={new Date(pubDate)} 
+  updatedDate={new Date(updatedAt)} 
+  heroImage={path + postImageUrl} 
+  slug={slug} 
+  authors={authors}
+  user={user}
+  headers={headers}
+>
+  <BlocksRenderer content={content as any} />
 </PostLayout>
