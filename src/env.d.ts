@@ -6,3 +6,7 @@ declare namespace App {
         user: import("lucia").User | null;
     }
 }
+
+interface ImportMetaEnv {
+    readonly STRAPI_URL: string;
+}
