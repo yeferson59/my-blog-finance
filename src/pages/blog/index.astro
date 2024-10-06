@@ -14,7 +14,7 @@ const { data, meta } = await fetchApi<DataPost>({
   query: {
     'pagination[page]': page,
     'pagination[pageSize]': pageSize,
-    'sort': 'publishedAt:desc',
+    'sort': 'pubDate:desc',
     'populate': 'image',
   },
 });
