@@ -8,9 +8,10 @@ import { Image } from "astro:assets";
 async function fetchPosts() {
   try {
     const posts = await fetchApi<Post[]>({
-      endpoint: 'posts?fields[0]=title&fields[1]=description&&fields[2]=pubDate&fields[3]=featured&fields[4]=tags&fields[5]=slug&populate[image][fields][0]=url',
-      wrappedByKey: 'data',
-      method: 'GET',
+      endpoint:
+        "articles?fields[0]=title&fields[1]=description&fields[2]=pubDate&fields[4]=slug&populate[cover][fields]=url,width,height",
+      wrappedByKey: "data",
+      method: "GET",
     });
 
     // Verifica si se recibieron datos antes de intentar ordenarlos
@@ -20,8 +21,9 @@ async function fetchPosts() {
     }
 
     // Ordena los posts más recientes
-    return posts.sort((a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime());
-
+    return posts.sort(
+      (a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime()
+    );
   } catch (error) {
     console.error("Error al obtener los artículos:", error);
     return [];
@@ -34,24 +36,45 @@ const recentPosts = allPosts.slice(0, 6);
 const path = import.meta.env.STRAPI_URL;
 ---
 
-<section id="posts" class="w-full py-12 md:py-24 lg:py-32 bg-white dark:bg-gray-800">
+<section
+  id="posts"
+  class="w-full py-12 md:py-24 lg:py-32 bg-white dark:bg-gray-800"
+>
   <div class="container px-4 md:px-6">
-    <h2 class="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl text-center mb-8 text-primary-800 dark:text-primary-200">
+    <h2
+      class="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl text-center mb-8 text-primary-800 dark:text-primary-200"
+    >
       Todos los Artículos
     </h2>
     <div class="grid gap-6 lg:grid-cols-3">
-      {recentPosts.map(({image: {url}, title, slug, description}) => (
-        <div class="rounded-lg border bg-card text-card-foreground shadow-sm">
-          <Image src={path+url as any} alt={title} class="w-full h-48 object-cover rounded-t-lg" transition:name={`img-${slug}`} inferSize/>
-          <div class="p-4">
-            <h3 class="text-lg font-bold" transition:name={title}>{title}</h3>
-            <p class="text-sm text-gray-500 dark:text-gray-400">{description}</p>
-            <a href={`/blog/post/${slug}`} class="mt-2 inline-block">
-              <Button variant="outline">Leer más</Button>
-            </a>
-          </div>
-        </div>
-      ))}
+      {
+        recentPosts.map(
+          ({ cover: { url, height, width }, title, slug, description }) => (
+            <div class="rounded-lg border bg-card text-card-foreground shadow-sm">
+              <Image
+                src={(path + url) as any}
+                alt={title}
+                class="w-full h-48 object-cover rounded-t-lg"
+                transition:name={`img-${slug}`}
+                height={height}
+                width={width}
+                loading="lazy"
+              />
+              <div class="p-4">
+                <h3 class="text-lg font-bold" transition:name={title}>
+                  {title}
+                </h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400">
+                  {description}
+                </p>
+                <a href={`/blog/post/${slug}`} class="mt-2 inline-block">
+                  <Button variant="outline">Leer más</Button>
+                </a>
+              </div>
+            </div>
+          )
+        )
+      }
     </div>
     <div class="text-center mt-8">
       <Button asChild>

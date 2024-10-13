@@ -4,39 +4,56 @@ import type Post from "@/interfaces/post";
 import fetchApi from "@/lib/strapi";
 import { Image } from "astro:assets";
 
-let allFinancePosts: Post[] = []
+let allFinancePosts: Post[] = [];
 
 try {
   allFinancePosts = await fetchApi<Post[]>({
-    endpoint: 'posts?filters[post_category][slug][$contains]=finanza&fields[0]=title&fields[1]=description&&fields[2]=pubDate&fields[3]=featured&fields[4]=tags&fields[5]=slug&populate[image][fields][0]=url',
-    wrappedByKey: 'data',
-    method: 'GET',
+    endpoint:
+      "articles?filters[category][slug][$contains]=finanzas&fields[0]=title&fields[1]=description&&fields[2]=pubDate&fields[3]=featured&fields[4]=slug&populate[cover][fields]=url,width,height",
+    wrappedByKey: "data",
+    method: "GET",
   });
 } catch (error) {
   console.error("Error al obtener los artículos:", error);
 }
 
-const financePosts = allFinancePosts.filter(post => post.featured === true).sort((a, b) => new Date(b.pubDate).valueOf() - new Date(a.pubDate).valueOf()).slice(0, 3)
+const financePosts = allFinancePosts
+  .filter((post) => post.featured === true)
+  .sort((a, b) => new Date(b.pubDate).valueOf() - new Date(a.pubDate).valueOf())
+  .slice(0, 3);
 const path = import.meta.env.STRAPI_URL;
 ---
 
-<section id="finanzas" class="w-full py-12 md:py-24 lg:py-32 bg-gray-100 dark:bg-gray-900">
+<section
+  id="finanzas"
+  class="w-full py-12 md:py-24 lg:py-32 bg-gray-100 dark:bg-gray-900"
+>
   <div class="container px-4 md:px-6">
-    <h2 class="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl text-center mb-8 text-primary-800 dark:text-primary-200">
+    <h2
+      class="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl text-center mb-8 text-primary-800 dark:text-primary-200"
+    >
       Finanzas
     </h2>
     <div class="grid gap-6 lg:grid-cols-3">
-      {financePosts.map(({title, image: {url}, slug}) => (
-        <div class="rounded-lg border bg-card text-card-foreground shadow-sm">
-          <Image src={path+url as any} alt={title} class="w-full h-48 object-cover rounded-t-lg" inferSize/>
-          <div class="p-4">
-            <h3 class="text-lg font-bold">{title}</h3>
-            <a href={`/blog/post/${slug}`} class="mt-2 inline-block">
-              <Button variant="outline">Leer más</Button>
-            </a>
+      {
+        financePosts.map(({ title, cover: { url, width, height }, slug }) => (
+          <div class="rounded-lg border bg-card text-card-foreground shadow-sm">
+            <Image
+              src={(path + url) as any}
+              alt={title}
+              class="w-full h-48 object-cover rounded-t-lg"
+              width={width}
+              height={height}
+            />
+            <div class="p-4">
+              <h3 class="text-lg font-bold">{title}</h3>
+              <a href={`/blog/post/${slug}`} class="mt-2 inline-block">
+                <Button variant="outline">Leer más</Button>
+              </a>
+            </div>
           </div>
-        </div>
-      ))}
+        ))
+      }
     </div>
   </div>
 </section>

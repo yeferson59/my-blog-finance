@@ -1,33 +1,44 @@
 ---
-import { Image } from 'astro:assets';
-import { formatDate } from '@/utils/date';
-import type Post from '@/interfaces/post';
+import { Image } from "astro:assets";
+import { formatDate } from "@/utils/date";
+import type Post from "@/interfaces/post";
 
 interface Props {
-  post: Post
+  post: Post;
 }
 
 const { post } = Astro.props;
-const { title, slug, pubDate, description, image } = post;
+const { title, slug, pubDate, description, cover } = post;
 ---
 
-<article class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden transition-transform hover:scale-105">
-  {image && (
-    <Image
-      src={import.meta.env.STRAPI_URL + image.url}
-      alt={title}
-      width={400}
-      height={200}
-      class="w-full h-48 object-cover"
-    />
-  )}
+<article
+  class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden transition-transform hover:scale-105"
+>
+  {
+    cover && (
+      <Image
+        src={import.meta.env.STRAPI_URL + cover.url}
+        alt={title}
+        width={400}
+        height={200}
+        class="w-full h-48 object-cover"
+      />
+    )
+  }
   <div class="p-6">
-    <h2 class="text-xl font-semibold text-primary-700 dark:text-primary-300 mb-2">
+    <h2
+      class="text-xl font-semibold text-primary-700 dark:text-primary-300 mb-2"
+    >
       <a href={`/blog/post/${slug}`} class="hover:underline">{title}</a>
     </h2>
-    <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">{formatDate(new Date(pubDate))}</p>
+    <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">
+      {formatDate(new Date(pubDate))}
+    </p>
     <p class="text-gray-700 dark:text-gray-300">{description}</p>
-    <a href={`/blog/post/${slug}`} class="inline-block mt-4 text-primary-600 dark:text-primary-400 hover:underline">
+    <a
+      href={`/blog/post/${slug}`}
+      class="inline-block mt-4 text-primary-600 dark:text-primary-400 hover:underline"
+    >
       Leer más
     </a>
   </div>

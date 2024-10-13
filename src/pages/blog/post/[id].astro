@@ -1,30 +1,33 @@
 ---
 // src/pages/post/[id].astro
-import PostLayout from '@/layouts/PostLayout.astro';
-import fetchApi from '@/lib/strapi';
-import type Post from '@/interfaces/post';
-import { BlocksRenderer } from '@strapi/blocks-react-renderer';
-import type Header from '@/interfaces/header';
-
+import PostLayout from "@/layouts/PostLayout.astro";
+import fetchApi from "@/lib/strapi";
+import type Post from "@/interfaces/post";
+import type Header from "@/interfaces/header";
+import {
+  BlocksRenderer,
+  type BlocksContent,
+} from "@strapi/blocks-react-renderer";
 const { id } = Astro.params;
 const user = Astro.locals.user;
 
 const post = await fetchApi<Post>({
-  endpoint: 'posts?populate[image][fields][0]=url&populate[authors][populate][avatar][fields][0]=url',
-  wrappedByKey: 'data',
+  endpoint:
+    "articles?populate[cover][fields][0]=url&populate[author][populate][avatar][fields]=url&populate=blocks",
+  wrappedByKey: "data",
   wrappedByList: true,
   query: {
-    'filters[slug][$eq]': id || '',
+    "filters[slug][$eq]": id || "",
   },
-  method: 'GET'
+  method: "GET",
 });
 
 if (!post) {
-  return Astro.redirect('/404');
+  return Astro.redirect("/404");
 }
 
-const { slug, title, content, image, updatedAt, pubDate, authors } = post;
-const { url: postImageUrl } = image;
+const { slug, title, blocks, cover, updatedAt, pubDate, author } = post;
+const { url: postImageUrl } = cover;
 
 const path = import.meta.env.STRAPI_URL;
 
@@ -36,26 +39,36 @@ interface StrapiBlock {
   // Añade más propiedades según sea necesario
 }
 
+const content: any[] = blocks.filter(
+  (block: any) => (block.____component = "shared.rich-text")
+);
+
+const body: StrapiBlock[] = content[0].body;
+
 // Extraer los encabezados para la tabla de contenidos
-const headers: Header[] = content
-  .filter((block: StrapiBlock): block is StrapiBlock & { type: 'heading', level: number } => 
-    block.type === 'heading' && typeof block.level === 'number')
-  .map((block: StrapiBlock & { type: 'heading', level: number }) => ({
+const headers: Header[] = body
+  .filter(
+    (
+      block: StrapiBlock
+    ): block is StrapiBlock & { type: "heading"; level: number } =>
+      block.type === "heading" && typeof block.level === "number"
+  )
+  .map((block: StrapiBlock & { type: "heading"; level: number }) => ({
     id: block.id,
-    text: block.children?.[0]?.text ?? '',
-    level: block.level
+    text: block.children?.[0]?.text ?? "",
+    level: block.level,
   }));
 ---
 
 <PostLayout
-  title={title} 
-  pubDate={new Date(pubDate)} 
-  updatedDate={new Date(updatedAt)} 
-  heroImage={path + postImageUrl} 
-  slug={slug} 
-  authors={authors}
+  title={title}
+  pubDate={new Date(pubDate)}
+  updatedDate={new Date(updatedAt)}
+  heroImage={path + postImageUrl}
+  slug={slug}
+  author={author}
   user={user}
   headers={headers}
 >
-  <BlocksRenderer content={content as any} />
+  <BlocksRenderer content={body as any} />
 </PostLayout>

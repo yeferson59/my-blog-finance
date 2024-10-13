@@ -2,17 +2,23 @@ import { db } from "@/auth";
 import type { APIContext } from "astro";
 import { z } from "astro:schema";
 
-const postIdSchema = z.number()
-const articleIdSchema = z.string()
+const postIdSchema = z.number();
+const articleIdSchema = z.string();
 
 export async function GET(context: APIContext): Promise<Response> {
-  const { articleId } = context.params
+  const { articleId } = context.params;
 
-  if (!articleId) return Response.json('undefined')
+  if (!articleId) return Response.json("undefined");
 
-  const { success, error, data } = await articleIdSchema.safeParseAsync(articleId)
+  const { success, error, data } = await articleIdSchema.safeParseAsync(
+    articleId
+  );
 
-  if (!success) return Response.json({ errors: error.flatten().fieldErrors }, { status: 400 })
+  if (!success)
+    return Response.json(
+      { errors: error.flatten().fieldErrors },
+      { status: 400 }
+    );
 
   const { rows: postId } = await db.execute({
     sql: "SELECT ID FROM POST WHERE SLUG = ?;",
@@ -25,5 +31,5 @@ export async function GET(context: APIContext): Promise<Response> {
     args: [post],
   });
 
-  return Response.json(rows)
+  return Response.json(rows);
 }
