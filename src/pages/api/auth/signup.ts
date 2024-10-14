@@ -32,9 +32,9 @@ export async function POST(context: APIContext): Promise<Response> {
     data.email,
   ]);
 
-  if (rows[0])
-    return Response.json({ message: "Email alreadt exist" }, { status: 400 });
+  if (rows[0]) return context.redirect("/auth/signup", 301);
 
+  console.log("no paso :" + rows);
   const passwordHash = await hash(data.password, {
     // recommended minimum parameters
     memoryCost: 19456,
