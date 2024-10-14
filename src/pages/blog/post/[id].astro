@@ -23,7 +23,16 @@ if (!post) {
   return Astro.redirect("/404");
 }
 
-const { slug, title, blocks, cover, updatedAt, pubDate, author } = post;
+const {
+  slug,
+  title,
+  blocks,
+  cover,
+  updatedAt,
+  pubDate,
+  author,
+  id: articleId,
+} = post;
 const { url: postImageUrl } = cover;
 
 interface StrapiBlock {
@@ -56,6 +65,7 @@ const headers: Header[] = body
 ---
 
 <PostLayout
+  id={articleId}
   title={title}
   pubDate={new Date(pubDate)}
   updatedDate={new Date(updatedAt)}

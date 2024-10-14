@@ -11,6 +11,7 @@ import type Header from "@/interfaces/header";
 import type { User } from "lucia";
 
 interface Props {
+  id: number;
   title: string;
   pubDate: Date;
   slug: string;
@@ -23,6 +24,7 @@ interface Props {
 }
 
 const {
+  id,
   title,
   pubDate,
   updatedDate,
@@ -98,7 +100,7 @@ const {
 
     <div class="mt-12 not-prose">
       <!-- Añadimos la clase 'not-prose' aquí -->
-      <CommentSection client:load articleId={slug} user={user} />
+      <CommentSection client:load articleId={id} user={user} />
     </div>
   </article>
   <ScrollToTopButton client:load />

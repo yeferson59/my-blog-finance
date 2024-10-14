@@ -1,9 +1,9 @@
-import { db } from "@/auth";
+import { sql } from "@/auth";
 import type { APIContext } from "astro";
 import { z } from "astro:schema";
 
 const postIdSchema = z.number();
-const articleIdSchema = z.string();
+const articleIdSchema = z.number();
 
 export async function GET(context: APIContext): Promise<Response> {
   const { articleId } = context.params;
@@ -11,7 +11,7 @@ export async function GET(context: APIContext): Promise<Response> {
   if (!articleId) return Response.json("undefined");
 
   const { success, error, data } = await articleIdSchema.safeParseAsync(
-    articleId
+    parseInt(articleId)
   );
 
   if (!success)
@@ -20,16 +20,10 @@ export async function GET(context: APIContext): Promise<Response> {
       { status: 400 }
     );
 
-  const { rows: postId } = await db.execute({
-    sql: "SELECT ID FROM POST WHERE SLUG = ?;",
-    args: [data],
-  });
-
-  const post = await postIdSchema.parseAsync(postId[0].id);
-  const { rows } = await db.execute({
-    sql: "SELECT COMMENT.*, USER.username, USER.email, USER.image FROM COMMENT JOIN USER ON COMMENT.user_id = USER.id WHERE COMMENT.post_id = ?;",
-    args: [post],
-  });
+  const rows = await sql(
+    "SELECT COMMENT.*, AUTH_USER.username, AUTH_USER.email, AUTH_USER.avatar FROM COMMENT JOIN AUTH_USER ON COMMENT.user_id = AUTH_USER.id WHERE COMMENT.post_id = $1;",
+    [data]
+  );
 
   return Response.json(rows);
 }
