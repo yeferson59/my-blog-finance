@@ -17,7 +17,7 @@ const { title, slug, pubDate, description, cover } = post;
   {
     cover && (
       <Image
-        src={import.meta.env.STRAPI_URL + cover.url}
+        src={cover.url}
         alt={title}
         width={400}
         height={200}

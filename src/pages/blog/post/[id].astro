@@ -4,10 +4,7 @@ import PostLayout from "@/layouts/PostLayout.astro";
 import fetchApi from "@/lib/strapi";
 import type Post from "@/interfaces/post";
 import type Header from "@/interfaces/header";
-import {
-  BlocksRenderer,
-  type BlocksContent,
-} from "@strapi/blocks-react-renderer";
+import { BlocksRenderer } from "@strapi/blocks-react-renderer";
 const { id } = Astro.params;
 const user = Astro.locals.user;
 
@@ -28,8 +25,6 @@ if (!post) {
 
 const { slug, title, blocks, cover, updatedAt, pubDate, author } = post;
 const { url: postImageUrl } = cover;
-
-const path = import.meta.env.STRAPI_URL;
 
 interface StrapiBlock {
   id: string;
@@ -64,7 +59,7 @@ const headers: Header[] = body
   title={title}
   pubDate={new Date(pubDate)}
   updatedDate={new Date(updatedAt)}
-  heroImage={path + postImageUrl}
+  heroImage={postImageUrl}
   slug={slug}
   author={author}
   user={user}
