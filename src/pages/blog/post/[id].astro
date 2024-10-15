@@ -32,7 +32,9 @@ const {
   pubDate,
   author,
   id: articleId,
+  documentId,
 } = post;
+
 const { url: postImageUrl } = cover;
 
 interface StrapiBlock {
@@ -74,6 +76,7 @@ const headers: Header[] = body
   author={author}
   user={user}
   headers={headers}
+  documentId={documentId}
 >
   <BlocksRenderer content={body as any} />
 </PostLayout>

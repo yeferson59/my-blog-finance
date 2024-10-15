@@ -11,7 +11,7 @@ import type Header from "@/interfaces/header";
 import type { User } from "lucia";
 
 interface Props {
-  id: number;
+  id?: number | string;
   title: string;
   pubDate: Date;
   slug: string;
@@ -21,6 +21,7 @@ interface Props {
   alt?: string;
   user: User | null; // Asegúrate de tipar esto correctamente según tu implementación de usuario
   headers: Header[];
+  documentId: string;
 }
 
 const {
@@ -34,6 +35,7 @@ const {
   author,
   user,
   headers,
+  documentId,
 } = Astro.props;
 ---
 
@@ -100,7 +102,12 @@ const {
 
     <div class="mt-12 not-prose">
       <!-- Añadimos la clase 'not-prose' aquí -->
-      <CommentSection client:load articleId={id} user={user} />
+      <CommentSection
+        client:load
+        articleId={id}
+        user={user}
+        documentId={documentId}
+      />
     </div>
   </article>
   <ScrollToTopButton client:load />

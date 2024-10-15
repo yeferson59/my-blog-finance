@@ -8,6 +8,7 @@ import { z } from "astro:schema";
 interface CommentSectionProps {
   articleId?: string | number;
   user: User | null;
+  documentId?: string;
 }
 
 const CommentSchema = z.object({
@@ -24,7 +25,11 @@ const CommentSchema = z.object({
 
 type Comment = z.infer<typeof CommentSchema>;
 
-export function CommentSection({ articleId, user }: CommentSectionProps) {
+export function CommentSection({
+  articleId,
+  user,
+  documentId,
+}: CommentSectionProps) {
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
   const [loading, setLoading] = useState(false);
@@ -66,6 +71,7 @@ export function CommentSection({ articleId, user }: CommentSectionProps) {
           userId: user.id,
           content: newComment,
           articleId,
+          documentId,
         }),
       });
 

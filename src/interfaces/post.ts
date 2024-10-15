@@ -19,6 +19,7 @@ export interface DataPost {
 
 export default interface Post {
   id: number;
+  documentId: string;
   title: string;
   description: string;
   blocks: StrapiBlock[];
