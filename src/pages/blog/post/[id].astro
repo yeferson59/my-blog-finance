@@ -60,7 +60,7 @@ const headers: Header[] = body
       block.type === "heading" && typeof block.level === "number"
   )
   .map((block: StrapiBlock & { type: "heading"; level: number }) => ({
-    id: block.id,
+    id: crypto.randomUUID(),
     text: block.children?.[0]?.text ?? "",
     level: block.level,
   }));
