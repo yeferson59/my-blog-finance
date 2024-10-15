@@ -1,29 +1,32 @@
 ---
 import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
-import "@/styles/global.css";
-import { ViewTransitions } from "astro:transitions";
+import BaseHead from "@/components/BaseHead.astro";
 
 interface Props {
   title: string;
   description?: string;
+  url: string;
+  imageUrl: string;
+  type?: "website" | "article";
 }
 
-const { title, description = "A personal blog about technology and finance" } =
-  Astro.props;
+const {
+  title,
+  description = "A personal blog about technology and finance",
+  url,
+  imageUrl,
+} = Astro.props;
 ---
 
 <!doctype html>
 <html lang="es" class="h-full">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="description" content={description} />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="generator" content={Astro.generator} />
-    <title>{title}</title>
-    <ViewTransitions />
-  </head>
+  <BaseHead
+    title={title}
+    description={description}
+    url={url}
+    imageUrl={imageUrl}
+  />
   <body
     class="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100"
   >

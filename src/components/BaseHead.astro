@@ -1,0 +1,65 @@
+---
+import { ViewTransitions } from "astro:transitions";
+import "@/styles/global.css";
+
+interface Props {
+  title: string;
+  description: string;
+  url: string;
+  imageUrl: string;
+  type?: "website" | "article"; // type of Open Graph object, e.g., "website" or "article"
+}
+
+const { title, description, url, imageUrl, type = "website" } = Astro.props;
+---
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="description" content={description} />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <title>{title}</title>
+
+  <!-- Open Graph Meta Tags -->
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:type" content={type} />
+  <meta property="og:url" content={url} />
+  <meta property="og:image" content={imageUrl} />
+
+  <!-- Twitter Card Meta Tags -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={title} />
+  <meta name="twitter:description" content={description} />
+  <meta name="twitter:image" content={imageUrl} />
+
+  <!-- Canonical Tag -->
+  <link rel="canonical" href={url} />
+
+  <!-- Structured Data for Rich Snippets -->
+  <script type="application/ld+json">
+    {JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      headline: title,
+      description: description,
+      url: url,
+      image: imageUrl,
+      author: {
+        "@type": "Person",
+        name: "Your Name or Blog's Author"
+      },
+      publisher: {
+        "@type": "Organization",
+        name: "Your Blog or Site Name",
+        logo: {
+          "@type": "ImageObject",
+          url: "/path/to/logo.png"
+        }
+      },
+      datePublished: "2024-10-15", // Replace with the actual publish date
+    })}
+  </script>
+
+  <ViewTransitions />
+</head>
