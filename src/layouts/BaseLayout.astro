@@ -15,22 +15,6 @@ interface Props {
 const { title, description = "", imageUrl } = Astro.props;
 ---
 
-<!doctype html>
-<html lang={WEBSITE_DATA.siteMetadataLenguaje} class="h-full">
-  <BaseHead title={title} description={description} imageUrl={imageUrl} />
-  <body
-    class="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100"
-  >
-    <Header />
-    <main class="flex-grow w-full py-8 sm:py-12 lg:py-16">
-      <div class="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <slot />
-      </div>
-    </main>
-    <Footer />
-  </body>
-</html>
-
 <script is:inline>
   const getThemePreference = () => {
     if (typeof localStorage !== "undefined" && localStorage.getItem("theme")) {
@@ -54,3 +38,18 @@ const { title, description = "", imageUrl } = Astro.props;
     });
   }
 </script>
+
+<html lang={WEBSITE_DATA.siteMetadataLenguaje} class="h-full">
+  <BaseHead title={title} description={description} imageUrl={imageUrl} />
+  <body
+    class="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+  >
+    <Header />
+    <main class="flex-grow w-full py-8 sm:py-12 lg:py-16">
+      <div class="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <slot />
+      </div>
+    </main>
+    <Footer />
+  </body>
+</html>
