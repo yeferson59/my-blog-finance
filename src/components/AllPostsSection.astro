@@ -4,7 +4,6 @@ import type Post from "@/interfaces/post";
 import fetchApi from "@/lib/strapi";
 import { Image } from "astro:assets";
 
-// Función para obtener los posts de Strapi
 async function fetchPosts() {
   try {
     const posts = await fetchApi<Post[]>({

@@ -6,6 +6,7 @@ import SignOut from "./SignOut";
 import Newsletter from "./Newsletter";
 import MobileMenu from "./MobileMenu";
 import WEBSITE_DATA from "@/utils/config";
+import { ModeToggle } from "./ModeToggle";
 
 // Asume que tienes una forma de verificar si el usuario está autenticado
 const isAuthenticated = Astro.locals.user; // Reemplaza esto con tu lógica real de autenticación
@@ -85,6 +86,7 @@ const isAuthenticated = Astro.locals.user; // Reemplaza esto con tu lógica real
             </a>
           )
         }
+        <ModeToggle client:load />
       </nav>
 
       <MobileMenu client:load isAuthenticated={isAuthenticated} />
