@@ -18,5 +18,12 @@ export default defineConfig({
     checkOrigin: true
   },
   output: 'server',
-  adapter: vercel()
+  adapter: vercel(),
+  vite: {
+    build: {
+      rollupOptions: {
+        external: ['tslib']
+      }
+    }
+  }
 });
