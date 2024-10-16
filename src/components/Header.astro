@@ -73,6 +73,7 @@ const isAuthenticated = Astro.locals.user; // Reemplaza esto con tu lógica real
         >
         <div>
           <Newsletter client:load />
+          <ModeToggle client:load />
         </div>
         {
           isAuthenticated ? (
@@ -86,7 +87,6 @@ const isAuthenticated = Astro.locals.user; // Reemplaza esto con tu lógica real
             </a>
           )
         }
-        <ModeToggle client:load />
       </nav>
       <MobileMenu client:load isAuthenticated={isAuthenticated} />
     </div>
