@@ -1,24 +1,30 @@
 ---
 import { ViewTransitions } from "astro:transitions";
 import "@/styles/global.css";
+import WEBSITE_DATA from "@/utils/config";
 
 interface Props {
   title: string;
   description: string;
-  url: string;
   imageUrl: string;
   type?: "website" | "article"; // type of Open Graph object, e.g., "website" or "article"
 }
 
-const { title, description, url, imageUrl, type = "website" } = Astro.props;
+const { siteMetadataTitle, siteMetadataDescription, siteMetadataHeaderTitle } = WEBSITE_DATA
+
+const { title, description, imageUrl, type = "website" } = Astro.props;
+const url = (new URL(Astro.url.pathname, WEBSITE_DATA.websiteUrl)).href
+
+const titleSite = `${title} | ${siteMetadataHeaderTitle}`
 ---
 
 <head>
   <meta charset="UTF-8" />
-  <meta name="description" content={description} />
+  <meta name="title"  content={siteMetadataTitle} />
+  <meta name="description" content={siteMetadataDescription} />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-  <title>{title}</title>
+  <title>{titleSite}</title>
 
   <!-- Open Graph Meta Tags -->
   <meta property="og:title" content={title} />
@@ -47,17 +53,17 @@ const { title, description, url, imageUrl, type = "website" } = Astro.props;
       image: imageUrl,
       author: {
         "@type": "Person",
-        name: "Your Name or Blog's Author"
+        name: "Yeferson Toloza"
       },
       publisher: {
         "@type": "Organization",
-        name: "Your Blog or Site Name",
+        name: "Tecnofinanzas",
         logo: {
           "@type": "ImageObject",
           url: "/path/to/logo.png"
         }
       },
-      datePublished: "2024-10-15", // Replace with the actual publish date
+      datePublished: "2024-10-16",
     })}
   </script>
 

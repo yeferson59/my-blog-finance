@@ -2,6 +2,7 @@
 import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
 import BaseHead from "@/components/BaseHead.astro";
+import WEBSITE_DATA from "@/utils/config";
 
 interface Props {
   title: string;
@@ -11,22 +12,12 @@ interface Props {
   type?: "website" | "article";
 }
 
-const {
-  title,
-  description = "A personal blog about technology and finance",
-  url,
-  imageUrl,
-} = Astro.props;
+const { title, description = "", imageUrl } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="es" class="h-full">
-  <BaseHead
-    title={title}
-    description={description}
-    url={url}
-    imageUrl={imageUrl}
-  />
+<html lang={WEBSITE_DATA.siteMetadataLenguaje} class="h-full">
+  <BaseHead title={title} description={description} imageUrl={imageUrl} />
   <body
     class="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100"
   >

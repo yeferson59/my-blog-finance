@@ -1,23 +1,33 @@
 ---
+import WEBSITE_DATA from "@/utils/config";
+
 // src/components/Footer.astro
 ---
 
 <footer class="w-full py-6 bg-primary-800 dark:bg-primary-900">
-	<div class="container px-4 md:px-6">
-		<div class="flex flex-col items-center justify-between gap-4 md:flex-row">
-			<div class="text-center md:text-left">
-				<p class="text-sm text-white dark:text-gray-300">
-					© 2024 TechFin Blog. Todos los derechos reservados.
-				</p>
-			</div>
-			<nav class="flex gap-4 sm:gap-6">
-				<a class="text-sm hover:underline underline-offset-4 text-white dark:text-gray-300" href="#">
-					Términos de Servicio
-				</a>
-				<a class="text-sm hover:underline underline-offset-4 text-white dark:text-gray-300" href="#">
-					Política de Privacidad
-				</a>
-			</nav>
-		</div>
-	</div>
+  <div class="container px-4 md:px-6">
+    <div class="flex flex-col items-center justify-between gap-4 md:flex-row">
+      <div class="text-center md:text-left">
+        <p class="text-sm text-white dark:text-gray-300">
+          {
+            `© 2024 ${WEBSITE_DATA.siteMetadataHeaderTitle}. Todos los derechos reservados.`
+          }
+        </p>
+      </div>
+      <nav class="flex gap-4 sm:gap-6">
+        <a
+          class="text-sm hover:underline underline-offset-4 text-white dark:text-gray-300"
+          href="/"
+        >
+          Términos de Servicio
+        </a>
+        <a
+          class="text-sm hover:underline underline-offset-4 text-white dark:text-gray-300"
+          href="/"
+        >
+          Política de Privacidad
+        </a>
+      </nav>
+    </div>
+  </div>
 </footer>
