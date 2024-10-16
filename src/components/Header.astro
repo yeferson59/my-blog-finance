@@ -86,9 +86,7 @@ const isAuthenticated = Astro.locals.user; // Reemplaza esto con tu lógica real
             </a>
           )
         }
-        <ModeToggle client:load />
       </nav>
-
       <MobileMenu client:load isAuthenticated={isAuthenticated} />
     </div>
   </div>
