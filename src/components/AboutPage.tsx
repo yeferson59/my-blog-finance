@@ -11,7 +11,7 @@ export default function AboutPage({ content }: { content: any }) {
         Sobre {WEBSITE_DATA.siteMetadataHeaderTitle}
       </h1>
 
-      <div className="max-w-3xl mx-auto mb-12">
+      <div className="max-w-3xl mx-auto mb-12 prose prose-lg dark:prose-invert ">
         <BlocksRenderer content={content.content[0].body} />
       </div>
 
