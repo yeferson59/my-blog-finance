@@ -1,0 +1,19 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import AboutPage from "@/components/AboutPage";
+import fetchApi from "@/lib/strapi";
+const about: any = await fetchApi({
+  endpoint:
+    "about?populate[cover][fields]=url&populate[author][populate][avatar][fields]=url,alternativeText,caption,width,height&populate=content",
+  wrappedByKey: "data",
+  method: "GET",
+});
+---
+
+<BaseLayout
+  title=`Sobre ${about.author.name} - TechFin Blog`
+  imageUrl={about.cover.url}
+  url=""
+>
+  <AboutPage client:load content={about} />
+</BaseLayout>
