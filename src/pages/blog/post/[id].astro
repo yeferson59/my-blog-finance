@@ -8,16 +8,23 @@ import { BlocksRenderer } from "@strapi/blocks-react-renderer";
 const { id } = Astro.params;
 const user = Astro.locals.user;
 
-const post = await fetchApi<Post>({
-  endpoint:
-    "articles?populate[cover][fields][0]=url&populate[author][populate][avatar][fields]=url&populate=blocks",
-  wrappedByKey: "data",
-  wrappedByList: true,
-  query: {
-    "filters[slug][$eq]": id || "",
-  },
-  method: "GET",
-});
+let post: Post | null = null;
+
+try {
+  post = await fetchApi<Post>({
+    endpoint:
+      "articles?populate[cover][fields][0]=url&populate[author][populate][avatar][fields]=url&populate=blocks",
+    wrappedByKey: "data",
+    wrappedByList: true,
+    query: {
+      "filters[slug][$eq]": id || "",
+    },
+    method: "GET",
+  });
+} catch (error) {
+  console.log("error");
+  throw new Error("Error fetching data");
+}
 
 if (!post) {
   return Astro.redirect("/404");

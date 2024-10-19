@@ -7,30 +7,36 @@ import type { DataPost } from "@/interfaces/post";
 
 const pageSize = 10;
 const page = parseInt(Astro.url.searchParams.get("page") || "1");
+let dataPost: DataPost | null = null;
 
-const { data, meta } = await fetchApi<DataPost>({
-  endpoint: "articles",
-  method: "GET",
-  query: {
-    "pagination[page]": page,
-    "pagination[pageSize]": pageSize,
-    sort: "pubDate:desc",
-    populate: "cover",
-  },
-});
+try {
+  dataPost = await fetchApi<DataPost>({
+    endpoint: "articles",
+    method: "GET",
+    query: {
+      "pagination[page]": page,
+      "pagination[pageSize]": pageSize,
+      sort: "pubDate:desc",
+      populate: "cover",
+    },
+  });
+} catch (error) {
+  console.log("error");
+  throw new Error("Error fetching data");
+}
 
-const totalPages = Math.ceil(meta.pagination.total / pageSize);
+if (!dataPost) return;
 
-const url = Astro.url;
+const totalPages = Math.ceil(dataPost.meta.pagination.total / pageSize);
 ---
 
-<BaseLayout title="Todos los articulos" imageUrl="" url={url as any}>
+<BaseLayout title="Todos los articulos" imageUrl="" url="">
   <main class="container mx-auto px-4 py-8">
     <h1 class="text-4xl font-bold text-primary-800 dark:text-primary-200 mb-8">
       Últimos Artículos
     </h1>
     <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-      {data.map((post) => <PostCard post={post} />)}
+      {dataPost.data.map((post) => <PostCard post={post} />)}
     </div>
     <Pagination currentPage={page} totalPages={totalPages} client:load />
   </main>
