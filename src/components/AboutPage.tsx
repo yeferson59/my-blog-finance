@@ -1,8 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { DollarSign, Cpu, Mail, Github, Linkedin, Twitter } from "lucide-react";
+import { DollarSign, Cpu, Mail } from "lucide-react";
 import WEBSITE_DATA from "@/utils/config";
 import { BlocksRenderer } from "@strapi/blocks-react-renderer";
+import { Icons } from "./ui/icons";
 
 export default function AboutPage({ content }: { content: any }) {
   return (
@@ -86,7 +87,7 @@ export default function AboutPage({ content }: { content: any }) {
                 rel="noopener noreferrer"
               >
                 <Button variant="outline" size="icon">
-                  <Github className="h-4 w-4" />
+                  <Icons.gitHub className="h-4 w-4" />
                 </Button>
               </a>
               <a
@@ -95,7 +96,7 @@ export default function AboutPage({ content }: { content: any }) {
                 rel="noopener noreferrer"
               >
                 <Button variant="outline" size="icon">
-                  <Linkedin className="h-4 w-4" />
+                  <Icons.linkedin className="h-4 w-4" />
                 </Button>
               </a>
               <a
@@ -104,7 +105,7 @@ export default function AboutPage({ content }: { content: any }) {
                 rel="noopener noreferrer"
               >
                 <Button variant="outline" size="icon">
-                  <Twitter className="h-4 w-4" />
+                  <Icons.twitter className="h-4 w-4" />
                 </Button>
               </a>
             </div>

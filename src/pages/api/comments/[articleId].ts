@@ -2,7 +2,6 @@ import { sql } from "@/auth";
 import type { APIContext } from "astro";
 import { z } from "astro:schema";
 
-const postIdSchema = z.number();
 const articleIdSchema = z.number();
 
 export async function GET(context: APIContext): Promise<Response> {
