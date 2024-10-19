@@ -7,7 +7,7 @@ export default function Newsletter() {
     <div className="relative inline-block">
       <a href="#newsletter">
         <Button variant="outline" aria-haspopup="true">
-          <Icons.google className="mr-2 h-4 w-4" />
+          <Icons.Mail className="mr-2 h-4 w-4" />
           Newsletter
         </Button>
       </a>
