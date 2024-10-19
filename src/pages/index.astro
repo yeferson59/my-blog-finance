@@ -1,19 +1,19 @@
 ---
 // src/pages/index.astro
-import Layout from "@/layouts/BaseLayout.astro";
 import HeroSection from "@/components/HeroSection.astro";
 import FeaturedArticles from "@/components/FeaturedArticles.astro";
 import TechnologySection from "@/components/TechnologySection.astro";
 import FinanceSection from "@/components/FinanceSection.astro";
 import AllPostsSection from "@/components/AllPostsSection.astro";
 import NewsletterSection from "@/components/NewsletterSection.astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
 ---
 
-<Layout title="Inicio blog" url="" imageUrl="">
+<BaseLayout title="Inicio blog" imageUrl="">
   <HeroSection />
   <TechnologySection />
   <FinanceSection />
   <FeaturedArticles />
   <AllPostsSection />
   <NewsletterSection />
-</Layout>
+</BaseLayout>
