@@ -1,5 +1,4 @@
 import React from "react";
-import type { LucideProps } from "lucide-react";
 import {
   Moon,
   SunMedium,

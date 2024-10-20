@@ -25,13 +25,5 @@ export default defineConfig({
 
   output: "server",
 
-  vite: {
-    build: {
-      rollupOptions: {
-        external: ["tslib"],
-      },
-    },
-  },
-
   adapter: netlify(),
 });
