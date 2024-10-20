@@ -24,7 +24,7 @@ export default defineConfig({
   output: "server",
   adapter: vercel({
     webAnalytics: { enabled: true },
-    maxDuration: 8,
+    maxDuration: 30,
     edgeMiddleware: true,
     isr: {
       // almacena todas las páginas en la primera solicitud y las guarda por 1 día
