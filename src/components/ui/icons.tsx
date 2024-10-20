@@ -3,7 +3,7 @@ import type { LucideProps } from "lucide-react";
 import {
   Moon,
   SunMedium,
-  Mail, // Nota: 'Google' no está disponible, usaremos 'Mail' como alternativa
+  Mail,
   LogOut,
   LogIn,
   ArrowRight,
@@ -11,9 +11,9 @@ import {
   X,
 } from "lucide-react";
 
-export type Icon = React.ComponentType<LucideProps>;
+export type Icon = React.ComponentType<React.SVGProps<SVGSVGElement>>;
 
-function Github({ className }: { className: string }) {
+function Github({ className, ...props }: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -22,18 +22,18 @@ function Github({ className }: { className: string }) {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
       className={className}
+      {...props}
     >
-      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-      <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+      <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" />
     </svg>
   );
 }
 
-function Google({ className }: { className: string }) {
+function Google({ className, ...props }: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -42,18 +42,18 @@ function Google({ className }: { className: string }) {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
       className={className}
+      {...props}
     >
-      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
       <path d="M20.945 11a9 9 0 1 1 -3.284 -5.997l-2.655 2.392a5.5 5.5 0 1 0 2.119 6.605h-4.125v-3h7.945z" />
     </svg>
   );
 }
 
-function Linkedin({ className }: { className: string }) {
+function Linkedin({ className, ...props }: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -62,22 +62,20 @@ function Linkedin({ className }: { className: string }) {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
       className={className}
+      {...props}
     >
-      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-      <path d="M4 4m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z" />
-      <path d="M8 11l0 5" />
-      <path d="M8 8l0 .01" />
-      <path d="M12 16l0 -5" />
-      <path d="M16 16v-3a2 2 0 0 0 -4 0" />
+      <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+      <rect x="2" y="9" width="4" height="12" />
+      <circle cx="4" cy="4" r="2" />
     </svg>
   );
 }
 
-function Twitter({ className }: { className: string }) {
+function Twitter({ className, ...props }: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -86,14 +84,13 @@ function Twitter({ className }: { className: string }) {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
       className={className}
+      {...props}
     >
-      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-      <path d="M4 4l11.733 16h4.267l-11.733 -16z" />
-      <path d="M4 20l6.768 -6.768m2.46 -2.46l6.772 -6.772" />
+      <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z" />
     </svg>
   );
 }
@@ -104,7 +101,7 @@ export const Icons = {
   twitter: Twitter,
   gitHub: Github,
   google: Google,
-  Mail, // Usamos Mail como alternativa para Google
+  mail: Mail,
   logOut: LogOut,
   logIn: LogIn,
   arrowRight: ArrowRight,
