@@ -24,6 +24,8 @@ export default defineConfig({
   output: "server",
   adapter: vercel({
     webAnalytics: { enabled: true },
+    maxDuration: 8,
+    edgeMiddleware: true,
   }),
   vite: {
     build: {
