@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
@@ -38,17 +38,23 @@ export function CommentSection({
 
   useEffect(() => {
     async function getPosts(articleId: string | number) {
-      const response = await fetch(`/api/comments/${articleId}`);
-      if (!response.ok) {
-        return;
+      try {
+        const response = await fetch(`/api/comments/${articleId}`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch comments");
+        }
+        const fetchedComments: Comment[] = await response.json();
+        setComments(
+          fetchedComments.sort(
+            (a, b) =>
+              new Date(b.created_at).getTime() -
+              new Date(a.created_at).getTime()
+          )
+        );
+      } catch (error) {
+        console.error("Error fetching comments:", error);
+        setError("Failed to load comments. Please try again later.");
       }
-      const fetchedComments: Comment[] = await response.json();
-      setComments(
-        fetchedComments.sort(
-          (a, b) =>
-            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-        )
-      );
     }
     if (articleId) {
       getPosts(articleId);

@@ -21,7 +21,9 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({ headers }) => {
     );
 
     headers.forEach((header) => {
-      const element = document.getElementById(header.text.trim());
+      const element = document.getElementById(
+        encodeURIComponent(header.text.trim())
+      );
       if (element) observer.observe(element);
     });
 
@@ -40,9 +42,9 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({ headers }) => {
             style={{ marginLeft: `${(header.level - 1) * 12}px` }}
           >
             <a
-              href={`#${header.text.trim()}`}
+              href={`#${encodeURIComponent(header.text.trim())}`}
               className={`block py-1 px-2 text-sm rounded transition-colors duration-200 ${
-                activeId === header.text.trim()
+                activeId === encodeURIComponent(header.text.trim())
                   ? "bg-primary-100 dark:bg-primary-900 text-primary-800 dark:text-primary-200"
                   : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
               }`}

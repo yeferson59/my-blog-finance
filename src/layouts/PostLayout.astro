@@ -4,11 +4,13 @@ import BaseLayout from "./BaseLayout.astro";
 import { Image } from "astro:assets";
 import { formatDate } from "@/utils/date";
 import type Author from "@/interfaces/author";
-import { CommentSection } from "@/components/CommentSection";
-import ScrollToTopButton from "@/components/ScrollToTopButton";
-import TableOfContents from "@/components/TableOfContents";
 import type Header from "@/interfaces/header";
 import type { User } from "lucia";
+
+// Import React components
+import { CommentSection } from "@/components/CommentSection";
+import TableOfContents from "@/components/TableOfContents";
+import ScrollToTopButton from "@/components/ScrollToTopButton";
 
 interface Props {
   id?: number | string;
@@ -98,7 +100,7 @@ const {
     <div class="lg:flex lg:gap-8 relative">
       <aside class="lg:w-64 xl:w-72 shrink-0">
         <div class="sticky top-24">
-          <TableOfContents headers={headers} client:load />
+          <TableOfContents headers={headers} client:only="react" />
         </div>
       </aside>
       <div class="prose prose-lg dark:prose-invert max-w-none lg:flex-grow">
@@ -108,12 +110,12 @@ const {
 
     <div class="mt-12 max-w-4xl mx-auto not-prose">
       <CommentSection
-        client:load
+        client:only="react"
         articleId={id}
         user={user}
         documentId={documentId}
       />
     </div>
   </article>
-  <ScrollToTopButton client:load />
+  <ScrollToTopButton client:only="react" />
 </BaseLayout>

@@ -1,45 +1,39 @@
-// src/components/ScrollToTopButton.tsx
-import React, { useState, useEffect } from 'react';
-import { Button } from "@/components/ui/button"
-import { ArrowUp } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from "react";
+import { Button } from "@/components/ui/button";
+import { ArrowUp } from "lucide-react";
 
 const ScrollToTopButton: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
 
-  useEffect(() => {
-    const toggleVisibility = () => {
-      if (window.pageYOffset > 300) {
-        setIsVisible(true);
-      } else {
-        setIsVisible(false);
-      }
-    };
-
-    window.addEventListener('scroll', toggleVisibility);
-
-    return () => window.removeEventListener('scroll', toggleVisibility);
+  const toggleVisibility = useCallback(() => {
+    setIsVisible(window.scrollY > 300);
   }, []);
+
+  useEffect(() => {
+    window.addEventListener("scroll", toggleVisibility);
+    return () => window.removeEventListener("scroll", toggleVisibility);
+  }, [toggleVisibility]);
 
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
-      behavior: 'smooth'
+      behavior: "smooth",
     });
   };
 
+  if (!isVisible) {
+    return null;
+  }
+
   return (
-    <>
-      {isVisible && (
-        <Button
-          onClick={scrollToTop}
-          className="fixed bottom-8 right-8 p-2 rounded-full shadow-lg transition-opacity duration-300"
-          size="icon"
-          aria-label="Volver arriba"
-        >
-          <ArrowUp className="h-4 w-4" />
-        </Button>
-      )}
-    </>
+    <Button
+      onClick={scrollToTop}
+      className="fixed bottom-8 right-8 p-2 rounded-full shadow-lg transition-opacity duration-300 opacity-70 hover:opacity-100 focus:opacity-100"
+      size="icon"
+      aria-label="Volver arriba"
+    >
+      <ArrowUp className="h-4 w-4" />
+    </Button>
   );
 };
 
