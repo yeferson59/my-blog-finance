@@ -5,9 +5,9 @@ import tailwind from "@astrojs/tailwind";
 
 import react from "@astrojs/react";
 
-import vercel from "@astrojs/vercel/serverless";
-
 import mdx from "@astrojs/mdx";
+
+import netlify from "@astrojs/netlify";
 
 // https://astro.build/config
 export default defineConfig({
@@ -18,19 +18,13 @@ export default defineConfig({
     react(),
     mdx(),
   ],
+
   security: {
     checkOrigin: true,
   },
+
   output: "server",
-  adapter: vercel({
-    webAnalytics: { enabled: true },
-    maxDuration: 30,
-    edgeMiddleware: true,
-    isr: {
-      // almacena todas las páginas en la primera solicitud y las guarda por 1 día
-      expiration: 60 * 60 * 24,
-    },
-  }),
+
   vite: {
     build: {
       rollupOptions: {
@@ -38,4 +32,6 @@ export default defineConfig({
       },
     },
   },
+
+  adapter: netlify(),
 });
