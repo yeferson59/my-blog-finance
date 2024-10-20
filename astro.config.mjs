@@ -26,6 +26,10 @@ export default defineConfig({
     webAnalytics: { enabled: true },
     maxDuration: 8,
     edgeMiddleware: true,
+    isr: {
+      // almacena todas las páginas en la primera solicitud y las guarda por 1 día
+      expiration: 60 * 60 * 24,
+    },
   }),
   vite: {
     build: {
