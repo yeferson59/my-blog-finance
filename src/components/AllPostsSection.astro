@@ -1,36 +1,19 @@
 ---
 import { Button } from "@/components/ui/button";
 import type Post from "@/interfaces/post";
-import fetchApi from "@/lib/strapi";
 import { Image } from "astro:assets";
 
-async function fetchPosts() {
-  try {
-    const posts = await fetchApi<Post[]>({
-      endpoint:
-        "articles?fields[0]=title&fields[1]=description&fields[2]=pubDate&fields[4]=slug&populate[cover][fields]=url,width,height",
-      wrappedByKey: "data",
-      method: "GET",
-    });
-
-    // Verifica si se recibieron datos antes de intentar ordenarlos
-    if (!posts || posts.length === 0) {
-      console.log("No se encontraron artículos");
-      return [];
-    }
-
-    // Ordena los posts más recientes
-    return posts.sort(
-      (a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime()
-    );
-  } catch (error) {
-    console.error("Error al obtener los artículos:", error);
-    return [];
-  }
+interface Props {
+  posts: Post[];
 }
 
+const { posts } = Astro.props;
+
+const ordenPosts = posts.sort(
+  (a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime()
+);
 // Llamada a la función de obtención de posts y selección de los 6 más recientes
-const allPosts = await fetchPosts();
+const allPosts = ordenPosts;
 const recentPosts = allPosts.slice(0, 6);
 ---
 

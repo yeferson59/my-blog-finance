@@ -32,7 +32,7 @@ export default interface Post {
   featured: boolean;
   category: {
     name: string;
-    url: string;
+    slug: string;
   };
   slug: string;
   createdAt: string;

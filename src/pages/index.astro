@@ -7,13 +7,28 @@ import FinanceSection from "@/components/FinanceSection.astro";
 import AllPostsSection from "@/components/AllPostsSection.astro";
 import NewsletterSection from "@/components/NewsletterSection.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import type Post from "@/interfaces/post";
+import fetchApi from "@/lib/strapi";
+
+let allPosts: Post[] = [];
+
+try {
+  allPosts = await fetchApi<Post[]>({
+    endpoint:
+      "articles?fields[0]=title&fields[1]=description&fields[2]=pubDate&fields[3]=featured&fields[4]=slug&populate[cover][fields]=url,width,height&populate[category][fields]=name,slug&pagination[limit]=7",
+    wrappedByKey: "data",
+    method: "GET",
+  });
+} catch (error) {
+  console.error("Error al obtener los artículos:", error);
+}
 ---
 
 <BaseLayout title="Inicio blog" imageUrl="">
   <HeroSection />
-  <TechnologySection />
-  <FinanceSection />
-  <FeaturedArticles />
-  <AllPostsSection />
+  <TechnologySection posts={allPosts} />
+  <FinanceSection posts={allPosts} />
+  <FeaturedArticles allPosts={allPosts} />
+  <AllPostsSection posts={allPosts} />
   <NewsletterSection />
 </BaseLayout>

@@ -1,21 +1,17 @@
 ---
 import { Button } from "@/components/ui/button";
 import type Post from "@/interfaces/post";
-import fetchApi from "@/lib/strapi";
 import { Image } from "astro:assets";
 
 let alltechPosts: Post[] = [];
 
-try {
-  alltechPosts = await fetchApi<Post[]>({
-    endpoint:
-      "articles?filters[category][slug][$contains]=tecnologia&fields[0]=title&fields[1]=description&&fields[2]=pubDate&fields[3]=featured&fields[4]=slug&populate[cover][fields]=url,width,height",
-    wrappedByKey: "data",
-    method: "GET",
-  });
-} catch (error) {
-  console.error("Error al obtener los artículos:", error);
+interface Props {
+  posts: Post[];
 }
+
+const { posts } = Astro.props;
+
+alltechPosts = posts.filter((post) => post.category.name === "Tecnología");
 
 const techPosts = alltechPosts
   .filter((post) => post.featured === true)
