@@ -30,9 +30,9 @@ Astro.response.headers.set(
 
 <BaseLayout title="Inicio blog" imageUrl="">
   <HeroSection />
-  <TechnologySection client:load posts={allPosts} />
-  <FinanceSection client:load posts={allPosts} />
-  <FeaturedArticles client:load allPosts={allPosts} />
-  <AllPostsSection client:load posts={allPosts} />
+  <TechnologySection posts={allPosts} />
+  <FinanceSection posts={allPosts} />
+  <FeaturedArticles allPosts={allPosts} />
+  <AllPostsSection posts={allPosts} />
   <NewsletterSection />
 </BaseLayout>
