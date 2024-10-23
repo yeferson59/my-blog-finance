@@ -80,8 +80,7 @@ export function CommentSection({
           content: newComment,
           articleId,
           documentId,
-        }),
-        cache: "no-store"
+        })
       });
 
       if (!response.ok) {

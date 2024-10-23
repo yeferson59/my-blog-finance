@@ -72,12 +72,6 @@ const headers: Header[] = body
     level: block.level,
   }));
 
-Astro.response.headers.set(
-  "Cache-Control",
-  "public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400"
-);
-
-// Tag the page with the book ID
 Astro.response.headers.set("netlify-cache-tag", id!);
 ---
 
