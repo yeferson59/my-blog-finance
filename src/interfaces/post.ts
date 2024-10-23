@@ -23,6 +23,9 @@ export default interface Post {
   title: string;
   description: string;
   blocks: StrapiBlock[];
+  coverUrl: {
+    small: string;
+  };
   cover: {
     url: string;
     height: number;

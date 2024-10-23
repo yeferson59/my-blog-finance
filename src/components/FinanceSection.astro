@@ -31,10 +31,10 @@ const financePosts = allFinancePosts
     </h2>
     <div class="grid gap-6 lg:grid-cols-3">
       {
-        financePosts.map(({ title, cover: { formats: {small : { url, width, height }} }, slug }) => (
+        financePosts.map(({ coverUrl: {small}, title, cover: { formats: {small : { width, height }} }, slug }) => (
           <div class="rounded-lg border bg-card text-card-foreground shadow-sm">
             <Image
-              src={url as any}
+              src={small as any}
               alt={title}
               class="w-full h-48 object-cover rounded-t-lg"
               width={width}

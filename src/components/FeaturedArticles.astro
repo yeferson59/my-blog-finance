@@ -29,7 +29,8 @@ const featuredPosts = allFeaturedPosts.sort(
       {
         featuredPosts.map(
           ({
-            cover: { formats: {small : {url, width, height}}  },
+            coverUrl: { small },
+            cover: {formats: {small : { width, height}}  },
             title,
             slug,
             description,
@@ -37,7 +38,7 @@ const featuredPosts = allFeaturedPosts.sort(
           }) => (
             <div class="rounded-lg border bg-card text-card-foreground shadow-sm">
               <Image
-                src={url as any}
+                src={small as any}
                 alt={title}
                 class="w-full h-48 object-cover rounded-t-lg"
                 width={width}

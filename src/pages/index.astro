@@ -26,13 +26,21 @@ Astro.response.headers.set(
   "Cache-Control",
   "public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400"
 );
+const optimizedImageUrl = (url: string, width: number, height: number) =>
+  `${url}?f_auto,q_auto,w_${width},h_${height}`;
+const articles = allPosts.map((article) => ({
+  ...article,
+  coverUrl: {
+    small: optimizedImageUrl(article.cover.formats.small.url, 500, 391),
+  },
+}));
 ---
 
 <BaseLayout title="Inicio blog" imageUrl="">
   <HeroSection />
-  <TechnologySection posts={allPosts} />
-  <FinanceSection posts={allPosts} />
-  <FeaturedArticles allPosts={allPosts} />
-  <AllPostsSection posts={allPosts} />
+  <TechnologySection posts={articles} />
+  <FinanceSection posts={articles} />
+  <FeaturedArticles allPosts={articles} />
+  <AllPostsSection posts={articles} />
   <NewsletterSection />
 </BaseLayout>
