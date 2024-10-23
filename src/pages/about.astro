@@ -22,6 +22,7 @@ if (!about) return;
 <BaseLayout
   title=`Sobre ${about.author.name} - TechFin Blog`
   imageUrl={about.cover.url}
+  type="website"
 >
   <AboutPage client:load content={about} />
 </BaseLayout>
