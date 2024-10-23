@@ -24,15 +24,15 @@ try {
 }
 Astro.response.headers.set(
   "Cache-Control",
-  "public, max-age=3600, s-maxage=3600"
+  "public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400"
 );
 ---
 
 <BaseLayout title="Inicio blog" imageUrl="">
   <HeroSection />
-  <TechnologySection posts={allPosts} />
-  <FinanceSection posts={allPosts} />
-  <FeaturedArticles allPosts={allPosts} />
-  <AllPostsSection posts={allPosts} />
+  <TechnologySection client:load posts={allPosts} />
+  <FinanceSection client:load posts={allPosts} />
+  <FeaturedArticles client:load allPosts={allPosts} />
+  <AllPostsSection client:load posts={allPosts} />
   <NewsletterSection />
 </BaseLayout>

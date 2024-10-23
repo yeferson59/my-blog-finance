@@ -50,10 +50,10 @@ const { title, description = "", imageUrl } = Astro.props;
   });
 </script>
 
-<html lang={WEBSITE_DATA.siteMetadataLenguaje} class="h-full">
+<html lang={WEBSITE_DATA.siteMetadataLenguaje}>
   <BaseHead title={title} description={description} imageUrl={imageUrl} />
   <body
-    class="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+    class="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 w-full"
   >
     <Header />
     <main class="flex-grow w-full py-8 sm:py-12 lg:py-16">
