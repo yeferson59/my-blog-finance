@@ -30,7 +30,7 @@ const recentPosts = allPosts.slice(0, 6);
     <div class="grid gap-6 lg:grid-cols-3">
       {
         recentPosts.map(
-          ({ cover: { url, height, width }, title, slug, description }) => (
+          ({ cover: { formats: {small: {url, width, height}}}, title, slug, description }) => (
             <div class="rounded-lg border bg-card text-card-foreground shadow-sm">
               <Image
                 src={url as any}

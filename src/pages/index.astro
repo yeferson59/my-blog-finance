@@ -15,7 +15,7 @@ let allPosts: Post[] = [];
 try {
   allPosts = await fetchApi<Post[]>({
     endpoint:
-      "articles?fields[0]=title&fields[1]=description&fields[2]=pubDate&fields[3]=featured&fields[4]=slug&populate[cover][fields]=url,width,height&populate[category][fields]=name,slug&pagination[limit]=7",
+      "articles?fields[0]=title&fields[1]=description&fields[2]=pubDate&fields[3]=featured&fields[4]=slug&populate[cover][fields]=formats&populate[category][fields]=name,slug&pagination[limit]=6",
     wrappedByKey: "data",
     method: "GET",
   });

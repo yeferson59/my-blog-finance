@@ -27,6 +27,20 @@ export default interface Post {
     url: string;
     height: number;
     width: number;
+    formats: {
+      small: {
+        ext: string;
+        url: string;
+        hash: string;
+        mime: string;
+        name: string;
+        path: string | null;
+        size: number;
+        width: number;
+        height: number;
+        sizeInBytes: number;
+      };
+    };
   };
   author: Author;
   featured: boolean;
