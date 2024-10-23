@@ -11,13 +11,12 @@ let dataPost: DataPost | null = null;
 
 try {
   dataPost = await fetchApi<DataPost>({
-    endpoint: "articles",
+    endpoint: "articles?populate[cover][fields]=formats",
     method: "GET",
     query: {
       "pagination[page]": page,
       "pagination[pageSize]": pageSize,
       sort: "pubDate:desc",
-      populate: "cover",
     },
   });
 } catch (error) {
@@ -28,6 +27,14 @@ try {
 if (!dataPost) return;
 
 const totalPages = Math.ceil(dataPost.meta.pagination.total / pageSize);
+
+Astro.response.headers.set(
+  "cache-control",
+  "public, max-age=0, must-revalidate"
+);
+
+// The CDN should cache for a year, but revalidate if the cache tag changes
+Astro.response.headers.set("netlify-cdn-cache-control", "s-maxage=31536000");
 ---
 
 <BaseLayout title="Todos los articulos" imageUrl="" type="website">

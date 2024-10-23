@@ -8,19 +8,19 @@ interface Props {
 }
 
 const { post } = Astro.props;
-const { title, slug, pubDate, description, cover } = post;
+const { title, slug, pubDate, description, cover: { formats: {small} } } = post;
 ---
 
 <article
   class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden transition-transform hover:scale-105"
 >
   {
-    cover && (
+    small && (
       <Image
-        src={cover.url}
+        src={small.url}
         alt={title}
-        width={400}
-        height={200}
+        width={small.width}
+        height={small.height}
         class="w-full h-48 object-cover"
       />
     )
