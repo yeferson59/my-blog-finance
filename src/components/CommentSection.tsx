@@ -1,192 +1,73 @@
-import React, { useState, useEffect } from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { Button } from "./ui/button";
-import { Textarea } from "./ui/textarea";
-import type { User } from "lucia";
+import { sql } from "@/auth";
+import type { APIContext } from "astro";
 import { z } from "astro:schema";
 
-interface CommentSectionProps {
-  articleId?: string | number;
-  user: User | null;
-  documentId?: string;
-}
-
-const CommentSchema = z.object({
-  id: z.string(),
-  post_id: z.number(),
-  user_id: z.string(),
+const bodySchema = z.object({
   content: z.string(),
-  created_at: z.string(),
-  updated_at: z.string().nullable(),
-  avatar: z.string(),
-  username: z.string().nullable(),
-  email: z.string().nullable(),
+  articleId: z.number(),
+  documentId: z.string(),
 });
 
-type Comment = z.infer<typeof CommentSchema>;
+export async function POST(context: APIContext): Promise<Response> {
+  const user = context.locals.user;
+  if (!user) {
+    return new Response(JSON.stringify({ message: "Unauthenticated" }), {
+      status: 401,
+    });
+  }
 
-export function CommentSection({
-  articleId,
-  user,
-  documentId,
-}: CommentSectionProps) {
-  const [comments, setComments] = useState<Comment[]>([]);
-  const [newComment, setNewComment] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [visibleComments, setVisibleComments] = useState(5);
+  try {
+    const { content, articleId, documentId } = await context.request.json();
 
-  useEffect(() => {
-    async function getPosts(articleId: string | number) {
-      try {
-        const response = await fetch(`/api/comments/${articleId}`, {
-          cache: "no-store",
-        });
-        if (!response.ok) {
-          throw new Error("Failed to fetch comments");
-        }
-        const fetchedComments: Comment[] = await response.json();
-        setComments(
-          fetchedComments.sort(
-            (a, b) =>
-              new Date(b.created_at).getTime() -
-              new Date(a.created_at).getTime(),
-          ),
-        );
-      } catch (error) {
-        console.error("Error fetching comments:", error);
-        setError("Failed to load comments. Please try again later.");
-      }
+    // Validar el cuerpo del request
+    const { success, error, data } = await bodySchema.safeParseAsync({
+      content,
+      articleId,
+      documentId,
+    });
+
+    if (!success) {
+      return new Response(
+        JSON.stringify({ errors: error.flatten().fieldErrors }),
+        { status: 400 },
+      );
     }
-    if (articleId) {
-      getPosts(articleId);
-    }
-  }, [articleId]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (newComment.trim() === "" || !user || !articleId) return;
-    setLoading(true);
-    setError(null);
+    // Obtener el documento del artículo basado en el documentId
+    const articlesDocument = await sql(
+      "SELECT * FROM ARTICLES WHERE DOCUMENT_ID = $1 AND PUBLISHED_AT IS NULL;",
+      [data.documentId],
+    );
 
-    try {
-      const response = await fetch("/api/comment", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          content: newComment,
-          articleId,
-          documentId,
-        }),
+    // Verificar si el documento existe
+    if (!articlesDocument || articlesDocument.length === 0) {
+      return new Response(JSON.stringify({ message: "Article not found" }), {
+        status: 404,
       });
-
-      if (!response.ok) {
-        throw new Error("Error al enviar el comentario");
-      }
-
-      const newCommentData: Comment = await response.json();
-      newCommentData.created_at = new Date(
-        newCommentData.created_at,
-      ).toLocaleString();
-
-      // Agregar el nuevo comentario al inicio de la lista
-      setComments([newCommentData, ...comments]);
-
-      // Limpiar el campo de nuevo comentario
-      setNewComment("");
-    } catch (error: any) {
-      setError(error.message || "Error desconocido");
-    } finally {
-      setLoading(false);
     }
-  };
 
-  const getAvatarFallback = (name?: string) => {
-    return name ? name.charAt(0).toUpperCase() : "?";
-  };
+    // Insertar el comentario
+    const insertedComment = await sql(
+      `INSERT INTO COMMENT(POST_ID, USER_ID, CONTENT)
+       VALUES($1, $2, $3)
+       RETURNING *`,
+      [articlesDocument[0].id, user.id, data.content],
+    );
 
-  const loadMoreComments = () => {
-    setVisibleComments((prevVisible) => prevVisible + 5);
-  };
+    // Obtener el comentario recién insertado con la información del usuario
+    const [commentWithUser] = await sql(
+      `SELECT COMMENT.*, AUTH_USER.username, AUTH_USER.email, AUTH_USER.avatar
+       FROM COMMENT
+       JOIN AUTH_USER ON COMMENT.user_id = AUTH_USER.id
+       WHERE COMMENT.id = $1;`,
+      [insertedComment[0].id],
+    );
 
-  return (
-    <div className="mt-12 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
-      <h2 className="text-2xl font-bold text-primary-800 dark:text-primary-200 mb-6">
-        Comentarios
-      </h2>
-
-      {user ? (
-        <form onSubmit={handleSubmit} className="mb-8">
-          <div className="flex items-start mb-4">
-            <Avatar className="w-10 h-10 mr-4">
-              <AvatarImage
-                src={user.avatar || ""}
-                alt={user.username || user.email || ""}
-              />
-              <AvatarFallback className="bg-secondary-500 text-white">
-                {getAvatarFallback(user.username || user.email)}
-              </AvatarFallback>
-            </Avatar>
-            <Textarea
-              className="flex-grow p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200"
-              rows={3}
-              placeholder="Escribe un comentario..."
-              value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
-            />
-          </div>
-          {error && <p className="text-red-500 mb-2">{error}</p>}
-          <Button
-            type="submit"
-            className="bg-primary-600 text-white py-2 px-4 rounded-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-opacity-50"
-            disabled={loading}
-          >
-            {loading ? "Publicando..." : "Publicar Comentario"}
-          </Button>
-        </form>
-      ) : (
-        <p className="mb-8 text-gray-600 dark:text-gray-400">
-          Por favor,{" "}
-          <a href="/auth/signin" className="text-primary-500 hover:underline">
-            inicia sesión
-          </a>{" "}
-          para comentar.
-        </p>
-      )}
-
-      {comments.slice(0, visibleComments).map((comment) => (
-        <div
-          key={comment.id}
-          className="mb-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg flex items-start"
-        >
-          <Avatar className="w-10 h-10 mr-4">
-            <AvatarImage src={comment.avatar} alt={comment.username ?? ""} />
-            <AvatarFallback className="bg-secondary-500 text-white">
-              {getAvatarFallback(comment.username || comment.email || "")}
-            </AvatarFallback>
-          </Avatar>
-          <div>
-            <p className="text-gray-800 dark:text-gray-200">
-              {comment.content}
-            </p>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
-              Por {comment.username || "Usuario anónimo"} el{" "}
-              {new Date(comment.created_at).toLocaleString()}
-            </p>
-          </div>
-        </div>
-      ))}
-
-      {comments.length > visibleComments && (
-        <Button
-          onClick={loadMoreComments}
-          className="mt-4 bg-secondary-500 text-white py-2 px-4 rounded-md hover:bg-secondary-600 focus:outline-none focus:ring-2 focus:ring-secondary-400 focus:ring-opacity-50"
-        >
-          Cargar más comentarios
-        </Button>
-      )}
-    </div>
-  );
+    return new Response(JSON.stringify(commentWithUser), { status: 200 });
+  } catch (error) {
+    console.error("Error al guardar el comentario:", error);
+    return new Response(JSON.stringify({ message: "Error saving comment" }), {
+      status: 500,
+    });
+  }
 }
