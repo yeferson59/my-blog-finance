@@ -13,8 +13,7 @@ export async function POST(context: APIContext): Promise<Response> {
   if (!user)
     return Response.json({ message: "Unauthentication" }, { status: 401 });
 
-  const { content, articleId, userId, documentId } =
-    await context.request.json();
+  const { content, articleId, documentId } = await context.request.json();
 
   const { success, error, data } = await bodySchema.safeParseAsync({
     content,
