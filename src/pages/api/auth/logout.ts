@@ -18,5 +18,6 @@ export async function POST(context: APIContext): Promise<Response> {
     sessionCookie.attributes,
   );
 
+  context.request.headers.set("Cache-Control", "no-store");
   return context.redirect("/auth/signin");
 }
