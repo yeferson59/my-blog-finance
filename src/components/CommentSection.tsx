@@ -39,12 +39,9 @@ export function CommentSection({
   useEffect(() => {
     async function getPosts(articleId: string | number) {
       try {
-        const response = await fetch(
-          `/api/comments/${articleId}`,
-          {
-            cache: "no-store",
-          },
-        );
+        const response = await fetch(`/api/comments/${articleId}`, {
+          cache: "no-store",
+        });
         if (!response.ok) {
           throw new Error("Failed to fetch comments");
         }
@@ -79,7 +76,6 @@ export function CommentSection({
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          userId: user.id,
           content: newComment,
           articleId,
           documentId,

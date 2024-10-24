@@ -5,27 +5,28 @@ import { z } from "astro:schema";
 const bodySchema = z.object({
   content: z.string(),
   articleId: z.number(),
-  userId: z.string(),
   documentId: z.string(),
 });
 
 export async function POST(context: APIContext): Promise<Response> {
   const user = context.locals.user;
-  if (!user)
-    return Response.json({ message: "Unauthentication" }, { status: 401 });
-  const { content, articleId, userId, documentId } =
-    await context.request.json();
+  if (!user) {
+    return Response.json({ message: "Unauthenticated" }, { status: 401 });
+  }
+
+  const { content, articleId, documentId } = await context.request.json();
   const { success, error, data } = await bodySchema.safeParseAsync({
     content,
     articleId,
-    userId,
     documentId,
   });
-  if (!success)
+
+  if (!success) {
     return Response.json(
-      { erros: error.flatten().fieldErrors },
+      { errors: error.flatten().fieldErrors },
       { status: 400 },
     );
+  }
 
   try {
     const [articlesDocument] = await sql(
@@ -33,17 +34,16 @@ export async function POST(context: APIContext): Promise<Response> {
       [data.documentId],
     );
 
-    await sql(
-      "INSERT INTO COMMENT(POST_ID, USER_ID, CONTENT) VALUES($1, $2, $3);",
-      [articlesDocument.id, data.userId, data.content],
+    const comment = await sql(
+      `INSERT INTO COMMENT(POST_ID, USER_ID, CONTENT)
+       VALUES($1, $2, $3)
+       RETURNING COMMENT.*, AUTH_USER.username, AUTH_USER.email, AUTH_USER.avatar`,
+      [articlesDocument.id, user.id, data.content],
     );
 
-    const [rows] = await sql(
-      "SELECT COMMENT.*, AUTH_USER.username, AUTH_USER.email, AUTH_USER.avatar FROM COMMENT JOIN AUTH_USER ON COMMENT.user_id = AUTH_USER.id WHERE COMMENT.post_id = $1;",
-      [articlesDocument.id],
-    );
-    return Response.json(rows, { status: 200 });
+    return Response.json(comment, { status: 200 });
   } catch (error) {
-    return Response.json({ error }, { status: 500 });
+    console.error("Error saving comment:", error);
+    return Response.json({ error: "Failed to save comment" }, { status: 500 });
   }
 }
