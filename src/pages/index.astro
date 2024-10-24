@@ -22,9 +22,10 @@ try {
 } catch (error) {
   console.error("Error al obtener los artículos:", error);
 }
+
 Astro.response.headers.set(
-  "Cache-Control",
-  "public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400",
+  "cache-control",
+  "public, max-age=0, must-revalidate",
 );
 
 const optimizedImageUrl = (url: string, width: number, height: number) =>
