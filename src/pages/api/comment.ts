@@ -5,7 +5,6 @@ import { z } from "astro:schema";
 const bodySchema = z.object({
   content: z.string(),
   articleId: z.number(),
-  userId: z.string(),
   documentId: z.string(),
 });
 
@@ -13,12 +12,13 @@ export async function POST(context: APIContext): Promise<Response> {
   const user = context.locals.user;
   if (!user)
     return Response.json({ message: "Unauthentication" }, { status: 401 });
+
   const { content, articleId, userId, documentId } =
     await context.request.json();
+
   const { success, error, data } = await bodySchema.safeParseAsync({
     content,
     articleId,
-    userId,
     documentId,
   });
   if (!success)
@@ -35,7 +35,7 @@ export async function POST(context: APIContext): Promise<Response> {
 
     await sql(
       "INSERT INTO COMMENT(POST_ID, USER_ID, CONTENT) VALUES($1, $2, $3);",
-      [articlesDocument.id, data.userId, data.content],
+      [articlesDocument.id, user.id, data.content],
     );
 
     const [rows] = await sql(

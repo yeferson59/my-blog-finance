@@ -74,7 +74,7 @@ const headers: Header[] = body
 
 Astro.response.headers.set(
   "Cache-Control",
-  "public, max-age=3600, s-maxage=0, stale-while-revalidate=1800",
+  "public, max-age=3600, s-maxage=0, stale-while-revalidate=10",
 );
 Astro.response.headers.set("netlify-cache-tag", id!);
 ---
