@@ -28,8 +28,6 @@ Astro.response.headers.set(
   "public, max-age=0, must-revalidate",
 );
 
-Astro.response.headers.set("netlify-cdn-cache-control", "s-maxage=31536000");
-
 const optimizedImageUrl = (url: string, width: number, height: number) =>
   `${url}?f_auto,q_auto,w_${width},h_${height}`;
 
