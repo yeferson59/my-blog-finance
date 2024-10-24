@@ -1,0 +1,5 @@
+content/
+.netlify
+.prettierrc.mjs
+.vscode/extensions.json
+.vscode/launch.json

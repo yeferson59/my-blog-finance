@@ -31,24 +31,35 @@ const techPosts = alltechPosts
     </h2>
     <div class="grid gap-6 lg:grid-cols-3">
       {
-        techPosts.map(({ coverUrl: {small}, title, cover: { formats: {small: { width, height }} }, slug }) => (
-          <div class="rounded-lg border bg-card text-card-foreground shadow-sm">
-            <Image
-              src={small as any}
-              alt={title}
-              class="w-full h-48 object-cover rounded-t-lg"
-              width={width}
-              height={height}
-              loading="eager"
-            />
-            <div class="p-4">
-              <h3 class="text-lg font-bold">{title}</h3>
-              <a href={`/blog/post/${slug}`} class="mt-2 inline-block">
-                <Button variant="outline">Leer más</Button>
-              </a>
+        techPosts.map(
+          ({
+            coverUrl: { small },
+            title,
+            cover: {
+              formats: {
+                small: { width, height },
+              },
+            },
+            slug,
+          }) => (
+            <div class="rounded-lg border bg-card text-card-foreground shadow-sm">
+              <Image
+                src={small as any}
+                alt={title}
+                class="w-full h-48 object-cover rounded-t-lg"
+                width={width}
+                height={height}
+                loading="eager"
+              />
+              <div class="p-4">
+                <h3 class="text-lg font-bold">{title}</h3>
+                <a href={`/blog/post/${slug}`} class="mt-2 inline-block">
+                  <Button variant="outline">Leer más</Button>
+                </a>
+              </div>
             </div>
-          </div>
-        ))
+          ),
+        )
       }
     </div>
   </div>

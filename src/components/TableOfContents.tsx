@@ -17,12 +17,12 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({ headers }) => {
           }
         });
       },
-      { rootMargin: "-100px 0% -80% 0%" }
+      { rootMargin: "-100px 0% -80% 0%" },
     );
 
     headers.forEach((header) => {
       const element = document.getElementById(
-        encodeURIComponent(header.text.trim())
+        encodeURIComponent(header.text.trim()),
       );
       if (element) observer.observe(element);
     });

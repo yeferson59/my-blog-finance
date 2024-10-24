@@ -7,7 +7,7 @@ export async function GET(context: APIContext): Promise<Response> {
   const state = generateState();
   const codeVerifier = generateCodeVerifier();
   const url = await google.createAuthorizationURL(state, codeVerifier, {
-    scopes: ["email", "profile"]
+    scopes: ["email", "profile"],
   });
 
   context.cookies.set("google_oauth_state", state, {
@@ -15,7 +15,7 @@ export async function GET(context: APIContext): Promise<Response> {
     secure: import.meta.env.PROD,
     httpOnly: true,
     maxAge: 60 * 10,
-    sameSite: "lax"
+    sameSite: "lax",
   });
 
   context.cookies.set("google_oauth_code_verifier", codeVerifier, {
@@ -23,8 +23,8 @@ export async function GET(context: APIContext): Promise<Response> {
     secure: import.meta.env.PROD,
     httpOnly: true,
     maxAge: 60 * 10,
-    sameSite: "lax"
-  })
+    sameSite: "lax",
+  });
 
   return context.redirect(url.toString());
 }

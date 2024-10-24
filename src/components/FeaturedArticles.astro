@@ -11,7 +11,7 @@ const { allPosts } = Astro.props;
 
 const allFeaturedPosts = allPosts.filter((post) => post.featured === true);
 const featuredPosts = allFeaturedPosts.sort(
-  (a, b) => new Date(b.pubDate).valueOf() - new Date(a.pubDate).valueOf()
+  (a, b) => new Date(b.pubDate).valueOf() - new Date(a.pubDate).valueOf(),
 );
 ---
 
@@ -30,7 +30,11 @@ const featuredPosts = allFeaturedPosts.sort(
         featuredPosts.map(
           ({
             coverUrl: { small },
-            cover: {formats: {small : { width, height}}  },
+            cover: {
+              formats: {
+                small: { width, height },
+              },
+            },
             title,
             slug,
             description,
@@ -60,7 +64,7 @@ const featuredPosts = allFeaturedPosts.sort(
                 </div>
               </div>
             </div>
-          )
+          ),
         )
       }
     </div>

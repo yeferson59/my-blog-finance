@@ -10,7 +10,7 @@ interface Props {
 const { posts } = Astro.props;
 
 const ordenPosts = posts.sort(
-  (a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime()
+  (a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime(),
 );
 // Llamada a la función de obtención de posts y selección de los 6 más recientes
 const allPosts = ordenPosts;
@@ -30,7 +30,17 @@ const recentPosts = allPosts.slice(0, 6);
     <div class="grid gap-6 lg:grid-cols-3">
       {
         recentPosts.map(
-          ({ coverUrl: {small}, cover: { formats: {small: { width, height}}}, title, slug, description }) => (
+          ({
+            coverUrl: { small },
+            cover: {
+              formats: {
+                small: { width, height },
+              },
+            },
+            title,
+            slug,
+            description,
+          }) => (
             <div class="rounded-lg border bg-card text-card-foreground shadow-sm">
               <Image
                 src={small as any}
@@ -53,7 +63,7 @@ const recentPosts = allPosts.slice(0, 6);
                 </a>
               </div>
             </div>
-          )
+          ),
         )
       }
     </div>

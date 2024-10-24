@@ -1,5 +1,5 @@
-import React from 'react';
-import { Button } from './ui/button';
+import React from "react";
+import { Button } from "./ui/button";
 
 interface PaginationProps {
   currentPage: number;
@@ -14,15 +14,15 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages }) => {
       <Button
         variant="outline"
         disabled={currentPage === 1}
-        onClick={() => window.location.href = `?page=${currentPage - 1}`}
+        onClick={() => (window.location.href = `?page=${currentPage - 1}`)}
       >
         Anterior
       </Button>
       {pages.map((page) => (
         <Button
           key={page}
-          variant={currentPage === page ? 'default' : 'outline'}
-          onClick={() => window.location.href = `?page=${page}`}
+          variant={currentPage === page ? "default" : "outline"}
+          onClick={() => (window.location.href = `?page=${page}`)}
         >
           {page}
         </Button>
@@ -30,7 +30,7 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages }) => {
       <Button
         variant="outline"
         disabled={currentPage === totalPages}
-        onClick={() => window.location.href = `?page=${currentPage + 1}`}
+        onClick={() => (window.location.href = `?page=${currentPage + 1}`)}
       >
         Siguiente
       </Button>

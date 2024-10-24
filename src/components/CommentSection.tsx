@@ -40,7 +40,7 @@ export function CommentSection({
     async function getPosts(articleId: string | number) {
       try {
         const response = await fetch(`/api/comments/${articleId}`, {
-          cache: "no-store"
+          cache: "no-store",
         });
         if (!response.ok) {
           throw new Error("Failed to fetch comments");
@@ -50,8 +50,8 @@ export function CommentSection({
           fetchedComments.sort(
             (a, b) =>
               new Date(b.created_at).getTime() -
-              new Date(a.created_at).getTime()
-          )
+              new Date(a.created_at).getTime(),
+          ),
         );
       } catch (error) {
         console.error("Error fetching comments:", error);
@@ -80,7 +80,7 @@ export function CommentSection({
           content: newComment,
           articleId,
           documentId,
-        })
+        }),
       });
 
       if (!response.ok) {
@@ -89,7 +89,7 @@ export function CommentSection({
 
       const newCommentData: Comment = await response.json();
       newCommentData.created_at = new Date(
-        newCommentData.created_at
+        newCommentData.created_at,
       ).toLocaleString();
       setComments([newCommentData, ...comments]);
       setNewComment("");

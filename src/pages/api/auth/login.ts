@@ -23,7 +23,7 @@ export async function POST(context: APIContext): Promise<Response> {
   if (!success)
     return Response.json(
       { errors: error.flatten().fieldErrors },
-      { status: 400 }
+      { status: 400 },
     );
 
   console.log(data);
@@ -69,7 +69,7 @@ export async function POST(context: APIContext): Promise<Response> {
   context.cookies.set(
     sessionCookie.name,
     sessionCookie.value,
-    sessionCookie.attributes
+    sessionCookie.attributes,
   );
 
   return context.redirect("/");

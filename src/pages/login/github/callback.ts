@@ -34,7 +34,7 @@ export async function GET(context: APIContext): Promise<Response> {
     // Replace this with your own DB client.
     const rows = await sql(
       "SELECT * FROM OAUTH_ACCOUNT WHERE (PROVIDER_ID = 'github') AND (PROVIDER_USER_ID = $1);",
-      [githubUser.id]
+      [githubUser.id],
     );
 
     if (rows.length === 1) {
@@ -48,7 +48,7 @@ export async function GET(context: APIContext): Promise<Response> {
       context.cookies.set(
         sessionCookie.name,
         sessionCookie.value,
-        sessionCookie.attributes
+        sessionCookie.attributes,
       );
       return context.redirect("/");
     }
@@ -63,7 +63,7 @@ export async function GET(context: APIContext): Promise<Response> {
       ]),
       sql(
         "INSERT INTO OAUTH_ACCOUNT(PROVIDER_ID, PROVIDER_USER_ID, USER_ID) VALUES($1, $2, $3);",
-        ["github", githubUser.id, userId]
+        ["github", githubUser.id, userId],
       ),
     ]);
 
@@ -72,7 +72,7 @@ export async function GET(context: APIContext): Promise<Response> {
     context.cookies.set(
       sessionCookie.name,
       sessionCookie.value,
-      sessionCookie.attributes
+      sessionCookie.attributes,
     );
     return context.redirect("/");
   } catch (e) {

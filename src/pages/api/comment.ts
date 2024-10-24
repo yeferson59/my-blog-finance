@@ -24,23 +24,23 @@ export async function POST(context: APIContext): Promise<Response> {
   if (!success)
     return Response.json(
       { erros: error.flatten().fieldErrors },
-      { status: 400 }
+      { status: 400 },
     );
 
   try {
     const [articlesDocument] = await sql(
       "SELECT * FROM ARTICLES WHERE DOCUMENT_ID = $1 AND PUBLISHED_AT IS NULL;",
-      [data.documentId]
+      [data.documentId],
     );
 
     await sql(
       "INSERT INTO COMMENT(POST_ID, USER_ID, CONTENT) VALUES($1, $2, $3);",
-      [articlesDocument.id, data.userId, data.content]
+      [articlesDocument.id, data.userId, data.content],
     );
 
     const [rows] = await sql(
       "SELECT COMMENT.*, AUTH_USER.username, AUTH_USER.email, AUTH_USER.avatar FROM COMMENT JOIN AUTH_USER ON COMMENT.user_id = AUTH_USER.id WHERE COMMENT.post_id = $1;",
-      [articlesDocument.id]
+      [articlesDocument.id],
     );
     return Response.json(rows, { status: 200 });
   } catch (error) {

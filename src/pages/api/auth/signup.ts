@@ -21,7 +21,7 @@ export async function POST(context: APIContext): Promise<Response> {
   if (!success)
     return Response.json(
       { erros: error.flatten().fieldErrors },
-      { status: 400 }
+      { status: 400 },
     );
 
   if (data.password !== data.confirmPassword) {
@@ -48,14 +48,14 @@ export async function POST(context: APIContext): Promise<Response> {
   try {
     await sql(
       "INSERT INTO AUTH_USER(ID, EMAIL, PASSWORD_HASH) VALUES($1, $2, $3);",
-      [userId, data.email, passwordHash]
+      [userId, data.email, passwordHash],
     );
     const session = await lucia.createSession(userId, {});
     const sessionCookie = lucia.createSessionCookie(session.id);
     context.cookies.set(
       sessionCookie.name,
       sessionCookie.value,
-      sessionCookie.attributes
+      sessionCookie.attributes,
     );
     return context.redirect("/");
   } catch (error) {

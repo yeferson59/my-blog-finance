@@ -1,7 +1,7 @@
 interface Props {
   endpoint: string;
   query?: Record<string, string | number>;
-  method: 'GET' | 'POST' | 'PUT' | 'DELETE';
+  method: "GET" | "POST" | "PUT" | "DELETE";
   wrappedByKey?: string;
   wrappedByList?: boolean;
   body?: BodyInit | null;
@@ -23,10 +23,10 @@ export default async function fetchApi<T>({
   query,
   wrappedByKey,
   wrappedByList,
-  body
+  body,
 }: Props): Promise<T> {
   // Remove the initial slash if present
-  endpoint = endpoint.replace(/^\//, '');
+  endpoint = endpoint.replace(/^\//, "");
 
   // Construct the URL with query parameters
   const url = new URL(`${import.meta.env.STRAPI_URL}/api/${endpoint}`);
@@ -48,7 +48,7 @@ export default async function fetchApi<T>({
     };
 
     // Add body for POST and PUT requests
-    if ((method === 'POST' || method === 'PUT') && body) {
+    if ((method === "POST" || method === "PUT") && body) {
       fetchOptions.body = JSON.stringify(body);
     }
 
@@ -74,9 +74,10 @@ export default async function fetchApi<T>({
     }
 
     return data as T;
-
   } catch (error) {
-    console.error('Error performing API request:', error);
-    throw new Error(`Error fetching data from API: ${error instanceof Error ? error.message : String(error)}`);
+    console.error("Error performing API request:", error);
+    throw new Error(
+      `Error fetching data from API: ${error instanceof Error ? error.message : String(error)}`,
+    );
   }
 }

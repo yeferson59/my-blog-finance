@@ -30,7 +30,7 @@ export async function GET(context: APIContext): Promise<Response> {
   try {
     const tokens = await google.validateAuthorizationCode(
       code,
-      storedCodeVerifier
+      storedCodeVerifier,
     );
     const googleUserResponse = await fetch(
       "https://www.googleapis.com/oauth2/v3/userinfo",
@@ -38,13 +38,13 @@ export async function GET(context: APIContext): Promise<Response> {
         headers: {
           Authorization: `Bearer ${tokens.accessToken}`,
         },
-      }
+      },
     );
     const googleUser: GoogleUser = await googleUserResponse.json();
 
     const rows = await sql(
       "SELECT * FROM OAUTH_ACCOUNT WHERE (PROVIDER_ID = 'google') AND (PROVIDER_USER_ID = $1);",
-      [googleUser.sub]
+      [googleUser.sub],
     );
 
     if (rows.length === 1) {
@@ -59,7 +59,7 @@ export async function GET(context: APIContext): Promise<Response> {
       context.cookies.set(
         sessionCookie.name,
         sessionCookie.value,
-        sessionCookie.attributes
+        sessionCookie.attributes,
       );
       return context.redirect("/");
     }
@@ -74,11 +74,11 @@ export async function GET(context: APIContext): Promise<Response> {
           googleUser.email,
           googleUser.email_verified,
           googleUser.picture,
-        ]
+        ],
       ),
       sql(
         "INSERT INTO OAUTH_ACCOUNT(PROVIDER_ID, PROVIDER_USER_ID, USER_ID) VALUES($1, $2, $3);",
-        ["google", googleUser.sub, userId]
+        ["google", googleUser.sub, userId],
       ),
     ]);
 
@@ -87,7 +87,7 @@ export async function GET(context: APIContext): Promise<Response> {
     context.cookies.set(
       sessionCookie.name,
       sessionCookie.value,
-      sessionCookie.attributes
+      sessionCookie.attributes,
     );
     return context.redirect("/");
   } catch (e) {
