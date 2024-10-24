@@ -11,6 +11,7 @@ export async function POST(context: APIContext): Promise<Response> {
   await lucia.invalidateSession(context.locals.session.id);
 
   const sessionCookie = lucia.createBlankSessionCookie();
+
   context.cookies.set(
     sessionCookie.name,
     sessionCookie.value,
