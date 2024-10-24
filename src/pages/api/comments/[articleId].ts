@@ -6,31 +6,55 @@ const articleIdSchema = z.number();
 
 export async function GET(context: APIContext): Promise<Response> {
   const { articleId } = context.params;
+  const header = new Headers({
+    "Cache-Control": "no-store", // Ensure fresh data for comments
+  });
 
-  if (!articleId) return Response.json("undefined");
+  if (!articleId)
+    return new Response("articleId is undefined", { status: 400 });
 
   const { success, error, data } = await articleIdSchema.safeParseAsync(
     parseInt(articleId),
   );
-  if (!success)
-    return Response.json(
-      { errors: error.flatten().fieldErrors },
+
+  if (!success) {
+    return new Response(
+      JSON.stringify({ errors: error.flatten().fieldErrors }),
       { status: 400 },
     );
+  }
 
-  const articleData = await sql("SELECT * FROM ARTICLES WHERE ID = $1;", [
-    data,
-  ]);
+  try {
+    const articleData = await sql("SELECT * FROM ARTICLES WHERE ID = $1;", [
+      data,
+    ]);
 
-  const [articlesDocument] = await sql(
-    "SELECT * FROM ARTICLES WHERE DOCUMENT_ID = $1 AND PUBLISHED_AT IS NULL;",
-    [articleData[0].document_id],
-  );
+    if (articleData.length === 0) {
+      return new Response("Article not found", { status: 404 });
+    }
 
-  const rows = await sql(
-    "SELECT COMMENT.*, AUTH_USER.username, AUTH_USER.email, AUTH_USER.avatar FROM COMMENT JOIN AUTH_USER ON COMMENT.user_id = AUTH_USER.id WHERE COMMENT.post_id = $1;",
-    [articlesDocument.id],
-  );
+    const documentId = articleData[0].document_id;
 
-  return Response.json(rows);
+    const articlesDocument = await sql(
+      "SELECT * FROM ARTICLES WHERE DOCUMENT_ID = $1 AND PUBLISHED_AT IS NULL;",
+      [documentId],
+    );
+
+    if (articlesDocument.length === 0) {
+      return new Response("Document not found", { status: 404 });
+    }
+
+    const rows = await sql(
+      `SELECT COMMENT.*, AUTH_USER.username, AUTH_USER.email, AUTH_USER.avatar 
+       FROM COMMENT 
+       JOIN AUTH_USER ON COMMENT.user_id = AUTH_USER.id 
+       WHERE COMMENT.post_id = $1;`,
+      [articlesDocument[0].id],
+    );
+
+    return new Response(JSON.stringify(rows), { status: 200, headers: header });
+  } catch (err) {
+    console.error("Database error:", err);
+    return new Response("Internal Server Error", { status: 500 });
+  }
 }
