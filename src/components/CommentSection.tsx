@@ -39,9 +39,12 @@ export function CommentSection({
   useEffect(() => {
     async function getPosts(articleId: string | number) {
       try {
-        const response = await fetch(`/api/comments/${articleId}`, {
-          cache: "no-store",
-        });
+        const response = await fetch(
+          `/api/comments/${articleId}`,
+          {
+            cache: "no-store",
+          },
+        );
         if (!response.ok) {
           throw new Error("Failed to fetch comments");
         }
@@ -91,7 +94,11 @@ export function CommentSection({
       newCommentData.created_at = new Date(
         newCommentData.created_at,
       ).toLocaleString();
+
+      // Agregar el nuevo comentario al inicio de la lista
       setComments([newCommentData, ...comments]);
+
+      // Limpiar el campo de nuevo comentario
       setNewComment("");
     } catch (error: any) {
       setError(error.message || "Error desconocido");
