@@ -4,18 +4,109 @@ import Footer from "@/components/Footer.astro";
 import BaseHead from "@/components/BaseHead.astro";
 import WEBSITE_DATA from "@/utils/config";
 
+interface SocialShare {
+  twitter?: string;
+  facebook?: string;
+  linkedin?: string;
+}
+
+interface Author {
+  name: string;
+  image?: string;
+  bio?: string;
+  socialLinks?: {
+    twitter?: string;
+    github?: string;
+    linkedin?: string;
+  };
+}
+
 interface Props {
   title: string;
   description?: string;
   imageUrl: string;
   type?: "website" | "article";
+  publishedDate?: string;
+  modifiedDate?: string;
+  author?: Author;
+  category?: string;
+  tags?: string[];
+  socialShare?: SocialShare;
+  isArticle?: boolean;
+  canonicalUrl?: string;
+  noindex?: boolean;
+  class?: string;
+  // Nuevas props
+  readingTime?: string;
+  wordCount?: number;
+  alternateLanguages?: { lang: string; url: string }[];
+  structuredData?: object;
 }
 
-const { title, description = "", imageUrl } = Astro.props;
+const {
+  title,
+  description = WEBSITE_DATA.siteMetadataDescription,
+  imageUrl,
+  type = "website",
+  publishedDate,
+  modifiedDate,
+  author = WEBSITE_DATA.defaultAuthor,
+  category,
+  tags = [],
+  socialShare,
+  isArticle = false,
+  canonicalUrl,
+  noindex = false,
+  class: className,
+  readingTime,
+  wordCount,
+  alternateLanguages = [],
+  structuredData,
+} = Astro.props;
+
+// Construir URL canónica
+const canonicalPath = canonicalUrl || Astro.url.pathname;
+const fullCanonicalUrl = new URL(canonicalPath, Astro.site).href;
+
+// Determinar el estado de indexación para robots
+const robotsContent = noindex ? "noindex, nofollow" : "index, follow";
+
+// Mejorar el manejo de datos estructurados
+const defaultStructuredData = {
+  "@context": "https://schema.org",
+  "@type": isArticle ? "Article" : "WebPage",
+  url: fullCanonicalUrl,
+  headline: title,
+  description: description,
+  image: imageUrl,
+  ...(isArticle && {
+    author: {
+      "@type": "Person",
+      name: author.name,
+      ...(author.image && { image: author.image }),
+    },
+    datePublished: publishedDate,
+    dateModified: modifiedDate || publishedDate,
+    publisher: {
+      "@type": "Organization",
+      name: WEBSITE_DATA.organizationName,
+      logo: {
+        "@type": "ImageObject",
+        url: WEBSITE_DATA.siteLogo,
+      },
+    },
+  }),
+};
+
+const finalStructuredData = structuredData || defaultStructuredData;
 ---
 
-<script is:inline>
-  function setDarkMode(document) {
+<!-- Script de tema oscuro mejorado -->
+<script
+  is:inline
+  define:vars={{ defaultTheme: WEBSITE_DATA.defaultTheme || "system" }}
+>
+  const themeScript = () => {
     const getThemePreference = () => {
       if (
         typeof localStorage !== "undefined" &&
@@ -23,44 +114,94 @@ const { title, description = "", imageUrl } = Astro.props;
       ) {
         return localStorage.getItem("theme");
       }
-      return window.matchMedia("(prefers-color-scheme: dark)").matches
-        ? "dark"
-        : "theme-light";
+      if (defaultTheme === "system") {
+        return window.matchMedia("(prefers-color-scheme: dark)").matches
+          ? "dark"
+          : "light";
+      }
+      return defaultTheme;
     };
-    const isDark = getThemePreference() === "dark";
-    document.documentElement.classList[isDark ? "add" : "remove"]("dark");
 
-    if (typeof localStorage !== "undefined") {
-      const observer = new MutationObserver(() => {
-        const isDark = document.documentElement.classList.contains("dark");
-        localStorage.setItem("theme", isDark ? "dark" : "theme-light");
-      });
-      observer.observe(document.documentElement, {
-        attributes: true,
-        attributeFilter: ["class"],
-      });
+    const applyTheme = (theme) => {
+      document.documentElement.classList.remove("light", "dark");
+      document.documentElement.classList.add(theme);
+      localStorage.setItem("theme", theme);
+    };
+
+    // Aplicar tema inicial
+    const theme = getThemePreference();
+    applyTheme(theme);
+
+    // Observar cambios en el sistema
+    if (defaultTheme === "system") {
+      window
+        .matchMedia("(prefers-color-scheme: dark)")
+        .addEventListener("change", ({ matches }) => {
+          applyTheme(matches ? "dark" : "light");
+        });
     }
-  }
+  };
 
-  setDarkMode(document);
+  // Ejecutar inmediatamente
+  themeScript();
 
+  // Asegurar que el tema persiste durante las transiciones de vista
   document.addEventListener("astro:before-swap", (ev) => {
-    // Pass the incoming document to set the theme on it
-    setDarkMode(ev.newDocument);
+    themeScript();
   });
 </script>
 
-<html lang={WEBSITE_DATA.siteMetadataLenguaje}>
-  <BaseHead title={title} description={description} imageUrl={imageUrl} />
+<html lang={WEBSITE_DATA.siteLanguage} class="scroll-smooth" data-theme="light">
+  <BaseHead
+    title={title}
+    description={description}
+    imageUrl={imageUrl}
+    type={type}
+    publishedDate={publishedDate}
+    modifiedDate={modifiedDate}
+    author={author}
+    category={category}
+    keywords={tags}
+    canonicalUrl={fullCanonicalUrl}
+    robotsDirective={robotsContent}
+    readingTime={readingTime}
+    wordCount={wordCount}
+    alternateLanguages={alternateLanguages}
+  />
   <body
-    class="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 w-full"
+    class:list={[
+      "flex flex-col min-h-screen",
+      "bg-gray-50 dark:bg-gray-900",
+      "text-gray-900 dark:text-gray-100",
+      "antialiased",
+      "transition-colors duration-300 ease-in-out",
+      className,
+    ]}
   >
+    <a
+      href="#main-content"
+      class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:p-4"
+    >
+      Saltar al contenido principal
+    </a>
+
     <Header />
-    <main class="flex-grow w-full py-8 sm:py-12 lg:py-16">
+
+    <main id="main-content" class="flex-grow w-full py-8 sm:py-12 lg:py-16">
       <div class="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <slot />
       </div>
     </main>
+
     <Footer />
+
+    {
+      finalStructuredData && (
+        <script
+          type="application/ld+json"
+          set:html={JSON.stringify(finalStructuredData)}
+        />
+      )
+    }
   </body>
 </html>

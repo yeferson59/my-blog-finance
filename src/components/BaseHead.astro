@@ -7,65 +7,211 @@ interface Props {
   title: string;
   description: string;
   imageUrl: string;
-  type?: "website" | "article"; // type of Open Graph object, e.g., "website" or "article"
+  type?: "website" | "article";
+  publishedDate?: string;
+  modifiedDate?: string;
+  author?: {
+    name: string;
+    url?: string;
+  };
+  keywords?: string[];
+  category?: string;
+  canonicalUrl: string;
+  // Nuevas props para SEO
+  robotsDirective?: string;
+  alternateLanguages?: { lang: string; url: string }[];
+  readingTime?: string;
+  wordCount?: number;
 }
 
-const { siteMetadataTitle, siteMetadataDescription, siteMetadataHeaderTitle } = WEBSITE_DATA
+const {
+  siteMetadataTitle,
+  siteMetadataDescription,
+  siteMetadataHeaderTitle,
+  siteLogo,
+  siteLanguage = "es",
+  organizationName = "Tecnofinanzas",
+} = WEBSITE_DATA;
 
-const { title, description, imageUrl, type = "website" } = Astro.props;
-const url = (new URL(Astro.url.pathname, WEBSITE_DATA.websiteUrl)).href
+const {
+  title,
+  description,
+  imageUrl,
+  type = "website",
+  publishedDate,
+  modifiedDate,
+  author = {
+    name: "Yeferson Toloza",
+    url: "",
+  },
+  keywords = [],
+  category,
+  canonicalUrl,
+  // Nuevos valores por defecto
+  robotsDirective = "index, follow",
+  alternateLanguages = [],
+  readingTime,
+  wordCount,
+} = Astro.props;
 
-const titleSite = `${title} | ${siteMetadataHeaderTitle}`
+const url = new URL(Astro.url.pathname, Astro.site).href;
+const titleSite = `${title} | ${siteMetadataHeaderTitle}`;
+
+// JSON-LD mejorado
+const getJsonLd = () => {
+  const baseLd = {
+    "@context": "https://schema.org",
+    "@type": type === "article" ? "BlogPosting" : "WebSite",
+    headline: title,
+    description,
+    url,
+    image: {
+      "@type": "ImageObject",
+      url: imageUrl,
+      width: "1200",
+      height: "630",
+    },
+    author: {
+      "@type": "Person",
+      name: author.name,
+      url: author.url,
+    },
+    publisher: {
+      "@type": "Organization",
+      name: organizationName,
+      logo: {
+        "@type": "ImageObject",
+        url: new URL(siteLogo, Astro.site).href,
+      },
+    },
+    inLanguage: siteLanguage,
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": url,
+    },
+  };
+
+  if (type === "article") {
+    return {
+      ...baseLd,
+      datePublished: publishedDate,
+      dateModified: modifiedDate || publishedDate,
+      articleSection: category,
+      keywords: keywords.join(", "),
+      wordCount: wordCount,
+      timeRequired: readingTime,
+    };
+  }
+
+  return baseLd;
+};
 ---
 
 <head>
+  <!-- Metadatos básicos -->
   <meta charset="UTF-8" />
-  <meta name="title"  content={siteMetadataTitle} />
-  <meta name="description" content={siteMetadataDescription} />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-  <title>{titleSite}</title>
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, shrink-to-fit=no"
+  />
+  <meta name="generator" content={Astro.generator} />
 
-  <!-- Open Graph Meta Tags -->
+  <!-- Control de robots y rastreo -->
+  <meta name="robots" content={robotsDirective} />
+  <meta name="googlebot" content={robotsDirective} />
+
+  <!-- Idioma -->
+  <html lang={siteLanguage}></html>
+
+  <!-- Título y descripción -->
+  <title>{titleSite}</title>
+  <meta name="title" content={siteMetadataTitle} />
+  <meta name="description" content={description} />
+
+  <!-- Favicon mejorado -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <meta name="theme-color" content="#ffffff" />
+
+  <!-- Keywords y categoría -->
+  {
+    keywords.length > 0 && (
+      <meta name="keywords" content={keywords.join(", ")} />
+    )
+  }
+  {category && <meta name="category" content={category} />}
+
+  <!-- Open Graph mejorado -->
+  <meta property="og:site_name" content={siteMetadataHeaderTitle} />
   <meta property="og:title" content={title} />
   <meta property="og:description" content={description} />
   <meta property="og:type" content={type} />
   <meta property="og:url" content={url} />
   <meta property="og:image" content={imageUrl} />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content={`Imagen de ${title}`} />
+  <meta property="og:locale" content={siteLanguage} />
 
-  <!-- Twitter Card Meta Tags -->
+  <!-- Twitter Card mejorada -->
   <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@tuUsuarioDeTwitter" />
+  <meta name="twitter:creator" content="@tuUsuarioDeTwitter" />
   <meta name="twitter:title" content={title} />
   <meta name="twitter:description" content={description} />
   <meta name="twitter:image" content={imageUrl} />
+  <meta name="twitter:image:alt" content={`Imagen de ${title}`} />
+  <meta name="twitter:domain" content={new URL(Astro.site!).host} />
 
-  <!-- Canonical Tag -->
+  <!-- Artículo específico mejorado -->
+  {
+    type === "article" && (
+      <>
+        <meta property="article:published_time" content={publishedDate} />
+        {modifiedDate && (
+          <meta property="article:modified_time" content={modifiedDate} />
+        )}
+        <meta property="article:author" content={author.name} />
+        {category && <meta property="article:section" content={category} />}
+        {keywords.map((keyword) => (
+          <meta property="article:tag" content={keyword} />
+        ))}
+        {readingTime && (
+          <meta property="article:reading_time" content={readingTime} />
+        )}
+      </>
+    )
+  }
+
+  <!-- Soporte multi-idioma -->
+  {
+    alternateLanguages.map((lang) => (
+      <link rel="alternate" hreflang={lang.lang} href={lang.url} />
+    ))
+  }
+  <link rel="alternate" hreflang="x-default" href={url} />
+
+  <!-- Canonical -->
   <link rel="canonical" href={url} />
 
-  <!-- Structured Data for Rich Snippets -->
-  <script is:inline type="application/ld+json">
-    {JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "BlogPosting",
-      headline: title,
-      description: description,
-      url: url,
-      image: imageUrl,
-      author: {
-        "@type": "Person",
-        name: "Yeferson Toloza"
-      },
-      publisher: {
-        "@type": "Organization",
-        name: "Tecnofinanzas",
-        logo: {
-          "@type": "ImageObject",
-          url: "/path/to/logo.png"
-        }
-      },
-      datePublished: "2024-10-16",
-    })}
-  </script>
+  <!-- JSON-LD -->
+  <script
+    is:inline
+    type="application/ld+json"
+    set:html={JSON.stringify(getJsonLd())}
+  />
 
+  <!-- DNS Prefetch para recursos externos -->
+  <link rel="dns-prefetch" href="//fonts.googleapis.com" />
+  <link rel="dns-prefetch" href="//fonts.gstatic.com" />
+
+  <!-- Preconnect a recursos importantes -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <!-- View Transitions -->
   <ViewTransitions />
 </head>
