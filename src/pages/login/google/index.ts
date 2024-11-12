@@ -6,9 +6,8 @@ import type { APIContext } from "astro";
 export async function GET(context: APIContext): Promise<Response> {
   const state = generateState();
   const codeVerifier = generateCodeVerifier();
-  const url = await google.createAuthorizationURL(state, codeVerifier, {
-    scopes: ["email", "profile"],
-  });
+  const scopes = ["email", "profile"];
+  const url = google.createAuthorizationURL(state, codeVerifier, scopes);
 
   context.cookies.set("google_oauth_state", state, {
     path: "/",

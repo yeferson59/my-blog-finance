@@ -5,7 +5,8 @@ import type { APIContext } from "astro";
 
 export async function GET(context: APIContext): Promise<Response> {
   const state = generateState();
-  const url = await github.createAuthorizationURL(state);
+  const scopes = ["user:email"];
+  const url = github.createAuthorizationURL(state, scopes);
 
   context.cookies.set("github_oauth_state", state, {
     path: "/",
