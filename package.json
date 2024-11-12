@@ -27,6 +27,7 @@
     "@strapi/blocks-react-renderer": "^1.0.1",
     "arctic": "^2.2.2",
     "astro": "^4.16.10",
+    "axios": "^1.7.7",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "lucia": "^3.2.2",
