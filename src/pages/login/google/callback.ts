@@ -4,6 +4,7 @@ import { generateIdFromEntropySize } from "lucia";
 import type { APIContext } from "astro";
 import { sql, lucia } from "@/auth";
 import { z } from "astro:schema";
+import axios from "axios";
 
 const oauthAccountSchema = z.object({
   providerId: z.string(),
@@ -17,6 +18,7 @@ export async function GET(context: APIContext): Promise<Response> {
   const storedState = context.cookies.get("google_oauth_state")?.value ?? null;
   const storedCodeVerifier =
     context.cookies.get("google_oauth_code_verifier")?.value ?? null;
+
   if (
     !code ||
     !state ||
@@ -32,15 +34,18 @@ export async function GET(context: APIContext): Promise<Response> {
       code,
       storedCodeVerifier,
     );
-    const googleUserResponse = await fetch(
+    const googleUserResponse = await axios.get(
       "https://www.googleapis.com/oauth2/v3/userinfo",
       {
         headers: {
-          Authorization: `Bearer ${tokens.accessToken}`,
+          Authorization: `Bearer ${tokens.accessToken()}`,
         },
       },
     );
-    const googleUser: GoogleUser = await googleUserResponse.json();
+    console.log(googleUserResponse);
+    const googleUser: GoogleUser = await googleUserResponse.data;
+
+    console.log(googleUser);
 
     const rows = await sql(
       "SELECT * FROM OAUTH_ACCOUNT WHERE (PROVIDER_ID = 'google') AND (PROVIDER_USER_ID = $1);",
