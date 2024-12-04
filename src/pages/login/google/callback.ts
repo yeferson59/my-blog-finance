@@ -42,10 +42,7 @@ export async function GET(context: APIContext): Promise<Response> {
         },
       },
     );
-    console.log(googleUserResponse);
     const googleUser: GoogleUser = await googleUserResponse.data;
-
-    console.log(googleUser);
 
     const rows = await sql(
       "SELECT * FROM OAUTH_ACCOUNT WHERE (PROVIDER_ID = 'google') AND (PROVIDER_USER_ID = $1);",

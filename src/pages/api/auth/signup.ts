@@ -34,7 +34,6 @@ export async function POST(context: APIContext): Promise<Response> {
 
   if (rows[0]) return context.redirect("/auth/signup", 301);
 
-  console.log("no paso :" + rows);
   const passwordHash = await hash(data.password, {
     // recommended minimum parameters
     memoryCost: 19456,

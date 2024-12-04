@@ -26,8 +26,6 @@ export async function POST(context: APIContext): Promise<Response> {
       { status: 400 },
     );
 
-  console.log(data);
-
   const rows = await sql("SELECT * FROM AUTH_USER WHERE EMAIL = $1;", [
     data.email,
   ]);
@@ -47,16 +45,12 @@ export async function POST(context: APIContext): Promise<Response> {
   if (!userData.passwordHash)
     return Response.json({ message: "Invalid user" }, { status: 400 });
 
-  console.log("pasado el hash" + userData);
-
   const validPassword = await verify(userData.passwordHash, data.password, {
     memoryCost: 19456,
     timeCost: 2,
     outputLen: 32,
     parallelism: 1,
   });
-
-  console.log(userData);
 
   if (!validPassword) {
     return Response.json("Incorrect email or password", {
