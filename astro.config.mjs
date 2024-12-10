@@ -2,7 +2,6 @@
 import { defineConfig } from "astro/config";
 import tailwind from "@astrojs/tailwind";
 import react from "@astrojs/react";
-import mdx from "@astrojs/mdx";
 import netlify from "@astrojs/netlify";
 import WEBSITE_DATA from "./src/utils/config";
 
@@ -12,7 +11,6 @@ export default defineConfig({
       applyBaseStyles: false,
     }),
     react(),
-    mdx(),
   ],
   site: WEBSITE_DATA.siteUrl,
   security: {
@@ -23,11 +21,4 @@ export default defineConfig({
     imageCDN: false,
     cacheOnDemandPages: true,
   }),
-  vite: {
-    resolve: {
-      alias: {
-        "@": "/src",
-      },
-    },
-  },
 });
