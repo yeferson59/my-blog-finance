@@ -1,4 +1,3 @@
-// utils/config-helpers.ts
 import WEBSITE_DATA from "./config";
 
 export const getAuthorData = (authorName?: string) => {
