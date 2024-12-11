@@ -15,13 +15,19 @@ let allPosts: Post[] = [];
 try {
   allPosts = await fetchApi<Post[]>({
     endpoint:
-      "articles?fields[0]=title&fields[1]=description&fields[2]=pubDate&fields[3]=featured&fields[4]=slug&populate[cover][fields]=formats&populate[category][fields]=name,slug&pagination[limit]=6",
+      "articles?fields[0]=title&fields[1]=description&fields[2]=pubDate&fields[3]=featured&fields[4]=slug&populate[cover][fields]=formats&populate[category][fields]=name,slug",
     wrappedByKey: "data",
     method: "GET",
+    query: {
+      "pagination[page]": 1,
+      "pagination[pageSize]": 6,
+      sort: "pubDate:desc",
+    },
   });
 } catch (error) {
   console.error("Error al obtener los artículos:", error);
 }
+console.log(allPosts);
 
 Astro.response.headers.set(
   "cache-control",
