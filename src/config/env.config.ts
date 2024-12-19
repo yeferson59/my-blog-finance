@@ -9,6 +9,6 @@ const EnvSchema = z.object({
   redisUrl: z.string(),
 });
 
-export const { redisUrl } = await EnvSchema.parseAsync({
+export const { redisUrl } = EnvSchema.parse({
   redisUrl: REDIS_URL,
 });
