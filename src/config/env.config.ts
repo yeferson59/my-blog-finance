@@ -1,7 +1,6 @@
 import { z } from "astro:schema";
-process.loadEnvFile();
 
-const { REDIS_URL } = process.env;
+const { REDIS_URL } = import.meta.env;
 
 console.log("REDIS_URL", REDIS_URL);
 
