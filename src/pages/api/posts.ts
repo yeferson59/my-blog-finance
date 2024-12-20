@@ -1,7 +1,6 @@
 import type Post from "@/interfaces/post";
 import fetchApi from "@/lib/strapi";
 import { client } from "@/utils/redis";
-import type { APIContext } from "astro";
 
 // Asegúrate de que Redis esté conectado antes de usarlo
 if (!client.isOpen) {

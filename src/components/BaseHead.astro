@@ -27,6 +27,7 @@ interface Props {
 const {
   siteMetadataTitle,
   siteMetadataHeaderTitle,
+  siteMetadataDescription,
   siteLogo,
   siteLanguage = "es",
   organizationName = "Tecnofinanzas",
@@ -34,7 +35,7 @@ const {
 
 const {
   title,
-  description,
+  description = siteMetadataDescription,
   imageUrl,
   type = "website",
   publishedDate,
