@@ -10,7 +10,7 @@ if (!client.isOpen) {
     .catch((err) => console.error("Error al conectar con Redis:", err));
 }
 
-export async function GET(context: APIContext): Promise<Response> {
+export async function GET(): Promise<Response> {
   let allPosts: Post[] = [];
 
   try {
