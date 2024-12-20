@@ -1,43 +1,67 @@
 ---
+// src/pages/articles.astro
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import PostCard from "@/components/PostCard.astro";
 import Pagination from "@/components/Pagination";
 import fetchApi from "@/lib/strapi";
 import type { DataPost } from "@/interfaces/post";
+import { client } from "@/utils/redis";
+
+if (!client.isOpen) {
+  client.connect().catch((err) =>
+    console.error("Error al conectar con Redis:", err)
+  );
+}
 
 const pageSize = 10;
 const page = parseInt(Astro.url.searchParams.get("page") || "1");
+
+// Crear una clave única para la página solicitada
+const cacheKey = `articles:page:${page}`;
 let dataPost: DataPost | null = null;
 
 try {
-  dataPost = await fetchApi<DataPost>({
-    endpoint: "articles?populate[cover][fields]=formats",
-    method: "GET",
-    query: {
-      "pagination[page]": page,
-      "pagination[pageSize]": pageSize,
-      sort: "pubDate:desc",
-    },
-  });
+  // Intentar obtener los datos desde Redis
+  const cachedData = await client.get(cacheKey);
+
+  if (cachedData) {
+    dataPost = JSON.parse(cachedData);
+    console.log(`Cargando datos cacheados para ${cacheKey}`);
+  } else {
+    // Si no está en cache, obtener datos desde la API
+    dataPost = await fetchApi<DataPost>({
+      endpoint: "articles?populate[cover][fields]=formats",
+      method: "GET",
+      query: {
+        "pagination[page]": page,
+        "pagination[pageSize]": pageSize,
+        sort: "pubDate:desc",
+      },
+    });
+
+    if (dataPost) {
+      // Guardar datos en Redis con expiración de 6 horas
+      await client.set(cacheKey, JSON.stringify(dataPost), { EX: 60 * 60 * 6 });
+    }
+  }
 } catch (error) {
-  console.log("error");
+  console.error("Error al obtener datos de los artículos:", error);
   throw new Error("Error fetching data");
 }
 
+// Si no se obtuvieron datos, retornar
 if (!dataPost) return;
 
+// Calcular total de páginas
 const totalPages = Math.ceil(dataPost.meta.pagination.total / pageSize);
 
-Astro.response.headers.set(
-  "cache-control",
-  "public, max-age=0, must-revalidate",
-);
-
-// The CDN should cache for a year, but revalidate if the cache tag changes
+// Configurar encabezados HTTP para la caché
+Astro.response.headers.set("cache-control", "public, max-age=3600, must-revalidate");
 Astro.response.headers.set("netlify-cdn-cache-control", "s-maxage=31536000");
+
 ---
 
-<BaseLayout title="Todos los articulos" imageUrl="" type="website">
+<BaseLayout title="Todos los artículos" imageUrl="" type="website">
   <main class="container mx-auto px-4 py-8">
     <h1 class="text-4xl font-bold text-primary-800 dark:text-primary-200 mb-8">
       Últimos Artículos

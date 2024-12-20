@@ -5,27 +5,52 @@ import fetchApi from "@/lib/strapi";
 import type Post from "@/interfaces/post";
 import type Header from "@/interfaces/header";
 import { BlocksRenderer } from "@strapi/blocks-react-renderer";
+import { client } from "@/utils/redis";
+
+// Asegúrate de que Redis esté conectado
+if (!client.isOpen) {
+  client.connect().catch((err) =>
+    console.error("Error al conectar con Redis:", err)
+  );
+}
+
 const { id } = Astro.params;
 const user = Astro.locals.user;
 
 let post: Post | null = null;
 
+// Intenta cargar el artículo desde Redis
+const cacheKey = `post:${id}`;
 try {
-  post = await fetchApi<Post>({
-    endpoint:
-      "articles?populate[cover][fields][0]=url&populate[author][populate][avatar][fields]=url&populate=blocks",
-    wrappedByKey: "data",
-    wrappedByList: true,
-    query: {
-      "filters[slug][$eq]": id || "",
-    },
-    method: "GET",
-  });
+  const cachedData = await client.get(cacheKey);
+
+  if (cachedData) {
+    post = JSON.parse(cachedData);
+    console.log(`Cargando desde caché: ${cacheKey}`);
+  } else {
+    // Si no está en Redis, consulta Strapi
+    post = await fetchApi<Post>({
+      endpoint:
+        "articles?populate[cover][fields][0]=url&populate[author][populate][avatar][fields]=url&populate=blocks",
+      wrappedByKey: "data",
+      wrappedByList: true,
+      query: {
+        "filters[slug][$eq]": id || "",
+      },
+      method: "GET",
+    });
+
+    if (post) {
+      // Guarda en Redis con expiración de 6 horas
+      await client.set(cacheKey, JSON.stringify(post), { EX: 60 * 60 * 6 });
+    }
+  }
 } catch (error) {
-  console.log("error");
+  console.error("Error al obtener datos del artículo:", error);
   throw new Error("Error fetching data");
 }
 
+// Si no hay datos, redirige a la página 404
 if (!post) {
   return Astro.redirect("/404");
 }
@@ -49,7 +74,6 @@ interface StrapiBlock {
   type: string;
   children?: { text: string }[];
   level?: number;
-  // Añade más propiedades según sea necesario
 }
 
 const content: any[] = blocks.filter(
@@ -72,11 +96,10 @@ const headers: Header[] = body
     level: block.level,
   }));
 
-Astro.response.headers.set(
-  "cache-control",
-  "public, max-age=0, must-revalidate",
-);
+// Configurar headers de caché HTTP
+Astro.response.headers.set("cache-control", "public, max-age=3600, must-revalidate");
 Astro.response.headers.set("netlify-cache-tag", id!);
+
 ---
 
 <PostLayout
