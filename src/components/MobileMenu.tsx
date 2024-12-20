@@ -11,7 +11,7 @@ interface MobileMenuProps {
   isAuthenticated: User | null;
 }
 
-const MobileMenu: React.FC<MobileMenuProps> = ({ isAuthenticated }) => {
+const MobileMenu = ({ isAuthenticated }: { isAuthenticated: MobileMenuProps }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -57,7 +57,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isAuthenticated }) => {
                 className="text-lg font-medium text-gray-700 dark:text-gray-200 hover:text-primary-500 dark:hover:text-primary-400 transition-colors duration-200"
                 href="/about"
               >
-                Sobre Nosotros
+                Sobre mi
               </a>
               <a
                 className="text-lg font-medium text-gray-700 dark:text-gray-200 hover:text-primary-500 dark:hover:text-primary-400 transition-colors duration-200"
