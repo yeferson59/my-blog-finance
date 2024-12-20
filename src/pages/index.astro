@@ -1,5 +1,4 @@
 ---
-// src/pages/index.astro
 import HeroSection from "@/components/HeroSection.astro";
 import FeaturedArticles from "@/components/FeaturedArticles.astro";
 import TechnologySection from "@/components/TechnologySection.astro";
@@ -10,13 +9,8 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import type Post from "@/interfaces/post";
 import axios from "axios";
 
-const response = await axios.get(Astro.url.origin+"/api/posts");
-let allPosts: Post[] = response.data;
-
-//Astro.response.headers.set(
-//  "cache-control",
-//  "public, max-age=0, must-revalidate",
-//);
+const { data } = await axios.get(new URL("/api/posts", Astro.url.origin).href);
+let allPosts: Post[] = data;
 
 const optimizedImageUrl = (url: string, width: number, height: number) =>
   `${url}?f_auto,q_auto,w_${width},h_${height}`;
