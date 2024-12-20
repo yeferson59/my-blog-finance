@@ -2,18 +2,35 @@
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import AboutPage from "@/components/AboutPage";
 import fetchApi from "@/lib/strapi";
+import { client } from "@/utils/redis";
+
+if (!client.isOpen) {
+  client
+    .connect()
+    .catch((err) => console.error("Error al conectar con Redis:", err));
+}
 
 let about: any | null = null;
-try {
-  about = await fetchApi({
-    endpoint:
-      "about?populate[cover][fields]=url&populate[author][populate][avatar][fields]=url,alternativeText,caption,width,height&populate=content",
-    wrappedByKey: "data",
-    method: "GET",
-  });
-} catch (error) {
-  console.log("error");
-  throw new Error("Error fetching data");
+
+const data = await client.get("about");
+
+if (!data) {
+  try {
+    about = await fetchApi({
+      endpoint:
+        "about?populate[cover][fields]=url&populate[author][populate][avatar][fields]=url,alternativeText,caption,width,height&populate=content",
+      wrappedByKey: "data",
+      method: "GET",
+    });
+    client.set("about", JSON.stringify(about), {
+      EX: 60 * 60 * 24,
+    });
+  } catch (error) {
+    console.log("error");
+    throw new Error("Error fetching data");
+  }
+} else {
+  about = await JSON.parse(data);
 }
 
 if (!about) return;
