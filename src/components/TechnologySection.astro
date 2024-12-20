@@ -17,10 +17,11 @@ const techPosts = alltechPosts
   .filter((post) => post.featured === true)
   .sort((a, b) => new Date(b.pubDate).valueOf() - new Date(a.pubDate).valueOf())
   .slice(0, 3);
+
+if(techPosts.length === 0) return;
 ---
 
 <section
-  id="tecnologia"
   class="w-full py-12 md:py-24 lg:py-32 bg-white dark:bg-gray-800"
 >
   <div class="container px-4 md:px-6">
