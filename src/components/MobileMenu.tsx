@@ -1,10 +1,10 @@
 // src/components/MobileMenu.tsx
-import React, { useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Icons } from "@/components/ui/icons";
-import SignOut from "./SignOut";
-import Newsletter from "./Newsletter";
-import { ModeToggle } from "./ModeToggle";
+import SignOut from "@/components/SignOut";
+import Newsletter from "@/components/Newsletter";
+import { ModeToggle } from "@/components/ModeToggle";
 import type { User } from "lucia";
 
 interface MobileMenuProps {

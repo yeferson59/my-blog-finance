@@ -106,7 +106,7 @@ const finalStructuredData = structuredData || defaultStructuredData;
   is:inline
   define:vars={{ defaultTheme: WEBSITE_DATA.defaultTheme || "system" }}
 >
-  const themeScript = () => {
+  function setDarkMode(document) {
     const getThemePreference = () => {
       if (
         typeof localStorage !== "undefined" &&
@@ -114,40 +114,30 @@ const finalStructuredData = structuredData || defaultStructuredData;
       ) {
         return localStorage.getItem("theme");
       }
-      if (defaultTheme === "system") {
-        return window.matchMedia("(prefers-color-scheme: dark)").matches
-          ? "dark"
-          : "light";
-      }
-      return defaultTheme;
+      return window.matchMedia("(prefers-color-scheme: dark)").matches
+        ? "dark"
+        : "theme-light";
     };
+    const isDark = getThemePreference() === "dark";
+    document.documentElement.classList[isDark ? "add" : "remove"]("dark");
 
-    const applyTheme = (theme) => {
-      document.documentElement.classList.remove("light", "dark");
-      document.documentElement.classList.add(theme);
-      localStorage.setItem("theme", theme);
-    };
-
-    // Aplicar tema inicial
-    const theme = getThemePreference();
-    applyTheme(theme);
-
-    // Observar cambios en el sistema
-    if (defaultTheme === "system") {
-      window
-        .matchMedia("(prefers-color-scheme: dark)")
-        .addEventListener("change", ({ matches }) => {
-          applyTheme(matches ? "dark" : "light");
-        });
+    if (typeof localStorage !== "undefined") {
+      const observer = new MutationObserver(() => {
+        const isDark = document.documentElement.classList.contains("dark");
+        localStorage.setItem("theme", isDark ? "dark" : "theme-light");
+      });
+      observer.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ["class"],
+      });
     }
-  };
+  }
 
-  // Ejecutar inmediatamente
-  themeScript();
+  setDarkMode(document);
 
-  // Asegurar que el tema persiste durante las transiciones de vista
   document.addEventListener("astro:before-swap", (ev) => {
-    themeScript();
+    // Pass the incoming document to set the theme on it
+    setDarkMode(ev.newDocument);
   });
 </script>
 
