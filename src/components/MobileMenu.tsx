@@ -7,11 +7,7 @@ import Newsletter from "@/components/Newsletter";
 import { ModeToggle } from "@/components/ModeToggle";
 import type { User } from "lucia";
 
-interface MobileMenuProps {
-  isAuthenticated: User | null;
-}
-
-const MobileMenu = ({ isAuthenticated }: { isAuthenticated: MobileMenuProps }) => {
+const MobileMenu = ({ isAuthenticated }: { isAuthenticated: User | null }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
