@@ -8,45 +8,10 @@ import AllPostsSection from "@/components/AllPostsSection.astro";
 import NewsletterSection from "@/components/NewsletterSection.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import type Post from "@/interfaces/post";
-import fetchApi from "@/lib/strapi";
-import { client } from "@/utils/redis";
+import axios from "axios";
 
-let allPosts: Post[] = [];
-
-// Intenta obtener los posts desde Redis
-client.on("error", (err) => console.error("Redis error:", err));
-client.connect();
-let data = await client.get("allPosts");
-
-try {
-  if (!data) {
-    // Si no hay datos en Redis, consulta la API
-    allPosts = await fetchApi<Post[]>({
-      endpoint:
-        "articles?fields[0]=title&fields[1]=description&fields[2]=pubDate&fields[3]=featured&fields[4]=slug&populate[cover][fields]=formats&populate[category][fields]=name,slug",
-      wrappedByKey: "data",
-      method: "GET",
-      query: {
-        "pagination[page]": 1,
-        "pagination[pageSize]": 6,
-        sort: "pubDate:desc",
-      },
-    });
-
-    // Guarda los datos en Redis con expiración de 12 horas (43200 segundos)
-    const key = "allPosts";
-    const value = JSON.stringify(allPosts);
-    await client.set(key, value, { EX: 60 * 60 * 12 });
-  } else {
-    // Si los datos están en Redis, los parseamos
-    allPosts = JSON.parse(data);
-  }
-} catch (error) {
-  console.error("Error al obtener los artículos:", error);
-} finally {
-  // Asegúrate de cerrar la conexión solo después de terminar las operaciones
-  await client.disconnect();
-}
+const response = await axios.get("http://localhost:4321/api/posts"); 
+let allPosts: Post[] = response.data;
 
 //Astro.response.headers.set(
 //  "cache-control",
