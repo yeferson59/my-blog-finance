@@ -18,12 +18,10 @@ const techPosts = alltechPosts
   .sort((a, b) => new Date(b.pubDate).valueOf() - new Date(a.pubDate).valueOf())
   .slice(0, 3);
 
-if(techPosts.length === 0) return;
+if (techPosts.length === 0) return;
 ---
 
-<section
-  class="w-full py-12 md:py-24 lg:py-32 bg-white dark:bg-gray-800"
->
+<section class="w-full py-12 md:py-24 lg:py-32 bg-white dark:bg-gray-800">
   <div class="container px-4 md:px-6">
     <h2
       class="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl text-center mb-8 text-primary-800 dark:text-primary-200"

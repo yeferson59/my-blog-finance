@@ -8,9 +8,9 @@ import type { DataPost } from "@/interfaces/post";
 import { client } from "@/utils/redis";
 
 if (!client.isOpen) {
-  client.connect().catch((err) =>
-    console.error("Error al conectar con Redis:", err)
-  );
+  client
+    .connect()
+    .catch((err) => console.error("Error al conectar con Redis:", err));
 }
 
 const pageSize = 12;
@@ -56,9 +56,11 @@ if (!dataPost) return;
 const totalPages = Math.ceil(dataPost.meta.pagination.total / pageSize);
 
 // Configurar encabezados HTTP para la caché
-Astro.response.headers.set("cache-control", "public, max-age=3600, must-revalidate");
+Astro.response.headers.set(
+  "cache-control",
+  "public, max-age=3600, must-revalidate",
+);
 Astro.response.headers.set("netlify-cdn-cache-control", "s-maxage=31536000");
-
 ---
 
 <BaseLayout title="Todos los artículos" imageUrl="" type="website">

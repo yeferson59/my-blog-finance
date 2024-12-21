@@ -9,9 +9,9 @@ import { client } from "@/utils/redis";
 
 // Asegúrate de que Redis esté conectado
 if (!client.isOpen) {
-  client.connect().catch((err) =>
-    console.error("Error al conectar con Redis:", err)
-  );
+  client
+    .connect()
+    .catch((err) => console.error("Error al conectar con Redis:", err));
 }
 
 const { id } = Astro.params;
@@ -97,9 +97,11 @@ const headers: Header[] = body
   }));
 
 // Configurar headers de caché HTTP
-Astro.response.headers.set("cache-control", "public, max-age=3600, must-revalidate");
+Astro.response.headers.set(
+  "cache-control",
+  "public, max-age=3600, must-revalidate",
+);
 Astro.response.headers.set("netlify-cache-tag", id!);
-
 ---
 
 <PostLayout
