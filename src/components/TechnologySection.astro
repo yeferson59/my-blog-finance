@@ -1,24 +1,56 @@
 ---
 import { Button } from "@/components/ui/button";
 import type Post from "@/interfaces/post";
+import fetchApi from "@/lib/strapi";
+import { client } from "@/utils/redis";
 import { Image } from "astro:assets";
 
-let alltechPosts: Post[] = [];
-
-interface Props {
-  posts: Post[];
+if (!client.isOpen) {
+  client
+    .connect()
+    .catch((err) => console.error("Error al conectar con Redis:", err));
 }
 
-const { posts } = Astro.props;
+let dataPost: Post[] = [];
 
-alltechPosts = posts.filter((post) => post.category.name === "Tecnología");
+try {
+  const data = await client.get("allPostsTech");
+  if (!data) {
+    dataPost = await fetchApi<Post[]>({
+      endpoint:
+        "articles?fields[0]=title&fields[1]=description&fields[2]=pubDate&fields[3]=featured&fields[4]=slug&populate[cover][fields]=formats&populate[category][fields]=name",
+      wrappedByKey: "data",
+      method: "GET",
+      query: {
+        "pagination[page]": 1,
+        "pagination[pageSize]": 3,
+        sort: "pubDate:desc",
+        "filters[category][name][$eq]": "Tecnología", // Filtro por categoría
+      },
+    });
+    await client.set("allPostsTech", JSON.stringify(dataPost), {
+      EX: 60 * 60 * 12,
+    });
+  } else {
+    dataPost = JSON.parse(data);
+  }
+} catch (error) {
+  console.error("Error al obtener los artículos:", error);
+}
 
-const techPosts = alltechPosts
-  .filter((post) => post.featured === true)
-  .sort((a, b) => new Date(b.pubDate).valueOf() - new Date(a.pubDate).valueOf())
-  .slice(0, 3);
+if (dataPost.length === 0) return;
 
-if (techPosts.length === 0) return;
+const optimizedImageUrl = (url: string, width: number, height: number) =>
+  `${url}?f_auto,q_auto,w_${width},h_${height}`;
+
+const allTechPosts = dataPost.map((article) => ({
+  ...article,
+  coverUrl: {
+    small: optimizedImageUrl(article.cover.formats.small.url, 500, 391),
+  },
+}));
+
+if (allTechPosts.length === 0) return;
 ---
 
 <section class="w-full py-12 md:py-24 lg:py-32 bg-white dark:bg-gray-800">
@@ -30,7 +62,7 @@ if (techPosts.length === 0) return;
     </h2>
     <div class="grid gap-6 lg:grid-cols-3">
       {
-        techPosts.map(
+        allTechPosts.map(
           ({
             coverUrl: { small },
             title,
