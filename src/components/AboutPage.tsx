@@ -1,9 +1,20 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { DollarSign, Cpu, Mail } from "lucide-react";
+import { DollarSign, Cpu, Mail, EyeClosed, X } from "lucide-react";
 import WEBSITE_DATA from "@/utils/config";
 import { BlocksRenderer } from "@strapi/blocks-react-renderer";
 import { Icons } from "./ui/icons";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export default function AboutPage({ content }: { content: any }) {
   return (
@@ -121,9 +132,43 @@ export default function AboutPage({ content }: { content: any }) {
           ¿Tienes preguntas, sugerencias o propuestas de colaboración? No dudes
           en ponerte en contacto conmigo.
         </p>
-        <Button className="bg-primary-600 hover:bg-primary-700 text-white">
-          <Mail className="mr-2 h-4 w-4" /> Envíame un correo
-        </Button>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button className="bg-primary-600 hover:bg-primary-700 text-white">
+              <Mail className="mr-2 h-4 w-4" /> Envíame un correo
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>¿Quieres enviarme un correo?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Envíame un correo y me pondre en pondremos en contacto contigo.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel asChild>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="bg-gray-200 hover:bg-gray-300 text-gray-700"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </AlertDialogCancel>
+              <AlertDialogAction asChild>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="bg-primary-600 hover:bg-primary-700 text-white"
+                >
+                  <a href="mailto:yefersontoloza59@gmail.com">
+                    <Icons.mail className="h-4 w-4" />
+                  </a>
+                </Button>
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </div>
   );
