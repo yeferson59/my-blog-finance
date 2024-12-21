@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { DollarSign, Cpu, Mail, EyeClosed, X } from "lucide-react";
+import { DollarSign, Cpu, Mail, X } from "lucide-react";
 import WEBSITE_DATA from "@/utils/config";
 import { BlocksRenderer } from "@strapi/blocks-react-renderer";
 import { Icons } from "./ui/icons";
