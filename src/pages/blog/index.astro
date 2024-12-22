@@ -64,7 +64,7 @@ Astro.response.headers.set("netlify-cdn-cache-control", "s-maxage=31536000");
 ---
 
 <BaseLayout title="Todos los artículos" imageUrl="" type="website">
-  <main class="container mx-auto px-4 py-8">
+  <section class="container mx-auto px-4 py-8">
     <h1 class="text-4xl font-bold text-primary-800 dark:text-primary-200 mb-8">
       Últimos Artículos
     </h1>
@@ -72,5 +72,5 @@ Astro.response.headers.set("netlify-cdn-cache-control", "s-maxage=31536000");
       {dataPost.data.map((post) => <PostCard post={post} />)}
     </div>
     <Pagination currentPage={page} totalPages={totalPages} client:load />
-  </main>
+  </section>
 </BaseLayout>
