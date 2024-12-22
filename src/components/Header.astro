@@ -54,7 +54,7 @@ const isAuthenticated = Astro.locals.user;
 
       <nav class="hidden lg:flex items-center space-x-6">
         {
-          MENU.map(({ name, href }) => (
+          MENU.filter(({ name }) => name !== "Inicio").map(({ name, href }) => (
             <a
               class="text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-primary-500 dark:hover:text-primary-400 transition-colors duration-200"
               href={href}
