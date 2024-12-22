@@ -8,13 +8,7 @@ interface Props {
 }
 
 const { posts } = Astro.props;
-
-const ordenPosts = posts.sort(
-  (a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime(),
-);
 // Llamada a la función de obtención de posts y selección de los 6 más recientes
-const allPosts = ordenPosts;
-const recentPosts = allPosts.slice(0, 6);
 ---
 
 <section
@@ -29,7 +23,7 @@ const recentPosts = allPosts.slice(0, 6);
     </h2>
     <div class="grid gap-6 lg:grid-cols-3">
       {
-        recentPosts.map(
+        posts.map(
           ({
             coverUrl: { small },
             cover: {
