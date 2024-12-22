@@ -12,11 +12,15 @@ export const MENU = [
     href: "/#finanzas",
   },
   {
-    name: "Sobre mi",
-    href: "/about",
-  },
-  {
     name: "Posts",
     href: "/blog",
+  },
+  {
+    name: "Proyectos",
+    href: "/projects",
+  },
+  {
+    name: "Sobre mi",
+    href: "/about",
   },
 ];
