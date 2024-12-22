@@ -11,7 +11,7 @@ interface Props {
 
 const { posts } = Astro.props;
 
-allFinancePosts = posts.filter((post) => (post.category.name = "Finanzas"));
+allFinancePosts = posts.filter((post) => post.category.name === "Finanzas");
 
 const financePosts = allFinancePosts
   .filter((post) => post.featured === true)
