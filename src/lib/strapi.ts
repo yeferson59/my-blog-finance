@@ -1,6 +1,6 @@
 interface Props {
   endpoint: string;
-  query?: Record<string, string | number>;
+  query?: Record<string, string | number | boolean>;
   method: "GET" | "POST" | "PUT" | "DELETE";
   wrappedByKey?: string;
   wrappedByList?: boolean;
