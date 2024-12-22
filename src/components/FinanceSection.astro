@@ -15,7 +15,6 @@ allFinancePosts = posts.filter((post) => (post.category.name = "Finanzas"));
 
 const financePosts = allFinancePosts
   .filter((post) => post.featured === true)
-  .sort((a, b) => new Date(b.pubDate).valueOf() - new Date(a.pubDate).valueOf())
   .slice(0, 3);
 ---
 
