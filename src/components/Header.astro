@@ -3,10 +3,10 @@
 import { Button } from "@/components/ui/button";
 import { Icons } from "@/components/ui/icons";
 import SignOut from "./SignOut";
-import Newsletter from "./Newsletter";
 import MobileMenu from "./MobileMenu";
 import WEBSITE_DATA from "@/utils/config";
 import { ModeToggle } from "./ModeToggle";
+import { MENU } from "@/utils/header";
 
 const isAuthenticated = Astro.locals.user;
 ---
@@ -53,28 +53,17 @@ const isAuthenticated = Astro.locals.user;
       </a>
 
       <nav class="hidden lg:flex items-center space-x-6">
-        <a
-          class="text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-primary-500 dark:hover:text-primary-400 transition-colors duration-200"
-          href="/#inicio">Inicio</a
-        >
-        <a
-          class="text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-primary-500 dark:hover:text-primary-400 transition-colors duration-200"
-          href="/#tecnologia">Tecnología</a
-        >
-        <a
-          class="text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-primary-500 dark:hover:text-primary-400 transition-colors duration-200"
-          href="/#finanzas">Finanzas</a
-        >
-        <a
-          class="text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-primary-500 dark:hover:text-primary-400 transition-colors duration-200"
-          href="/about">Sobre mi</a
-        >
-        <a
-          class="text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-primary-500 dark:hover:text-primary-400 transition-colors duration-200"
-          href="/blog">Posts</a
-        >
+        {
+          MENU.map(({ name, href }) => (
+            <a
+              class="text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-primary-500 dark:hover:text-primary-400 transition-colors duration-200"
+              href={href}
+            >
+              {name}
+            </a>
+          ))
+        }
         <div class="flex items-center space-x-2">
-          <Newsletter client:load />
           <ModeToggle client:load />
         </div>
         {

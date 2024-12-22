@@ -3,9 +3,9 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Icons } from "@/components/ui/icons";
 import SignOut from "@/components/SignOut";
-import Newsletter from "@/components/Newsletter";
 import { ModeToggle } from "@/components/ModeToggle";
 import type { User } from "lucia";
+import { MENU } from "@/utils/header";
 
 const MobileMenu = ({ isAuthenticated }: { isAuthenticated: User | null }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -31,36 +31,14 @@ const MobileMenu = ({ isAuthenticated }: { isAuthenticated: User | null }) => {
               </Button>
             </div>
             <nav className="flex flex-col space-y-4 mt-6">
-              <a
-                className="text-lg font-medium text-gray-700 dark:text-gray-200 hover:text-primary-500 dark:hover:text-primary-400 transition-colors duration-200"
-                href="/#inicio"
-              >
-                Inicio
-              </a>
-              <a
-                className="text-lg font-medium text-gray-700 dark:text-gray-200 hover:text-primary-500 dark:hover:text-primary-400 transition-colors duration-200"
-                href="/#tecnologia"
-              >
-                Tecnología
-              </a>
-              <a
-                className="text-lg font-medium text-gray-700 dark:text-gray-200 hover:text-primary-500 dark:hover:text-primary-400 transition-colors duration-200"
-                href="/#finanzas"
-              >
-                Finanzas
-              </a>
-              <a
-                className="text-lg font-medium text-gray-700 dark:text-gray-200 hover:text-primary-500 dark:hover:text-primary-400 transition-colors duration-200"
-                href="/about"
-              >
-                Sobre mi
-              </a>
-              <a
-                className="text-lg font-medium text-gray-700 dark:text-gray-200 hover:text-primary-500 dark:hover:text-primary-400 transition-colors duration-200"
-                href="/blog"
-              >
-                Posts
-              </a>
+              {MENU.map(({ name, href }) => (
+                <a
+                  className="text-lg font-medium text-gray-700 dark:text-gray-200 hover:text-primary-500 dark:hover:text-primary-400 transition-colors duration-200"
+                  href={href}
+                >
+                  {name}
+                </a>
+              ))}
               <div className="pt-4 pb-6">
                 {isAuthenticated ? (
                   <SignOut />
@@ -74,7 +52,6 @@ const MobileMenu = ({ isAuthenticated }: { isAuthenticated: User | null }) => {
                 )}
               </div>
               <div className="flex flex-col space-y-4">
-                <Newsletter />
                 <ModeToggle />
               </div>
             </nav>
