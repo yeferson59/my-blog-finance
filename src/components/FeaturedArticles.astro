@@ -1,18 +1,60 @@
 ---
 import { Button } from "@/components/ui/button";
 import type Post from "@/interfaces/post";
+import fetchApi from "@/lib/strapi";
 import { Image } from "astro:assets";
+import { client } from "@/utils/redis";
 
-interface Props {
-  allPosts: Post[];
+let featuredPosts: Post[] = [];
+
+if (!client.isOpen) {
+  client
+    .connect()
+    .catch((err) => console.error("Error al conectar con Redis:", err));
 }
 
-const { allPosts } = Astro.props;
+try {
+  const data = await client.get("featuredPosts");
 
-const allFeaturedPosts = allPosts.filter((post) => post.featured === true);
-const featuredPosts = allFeaturedPosts.sort(
-  (a, b) => new Date(b.pubDate).valueOf() - new Date(a.pubDate).valueOf(),
-);
+  if (!data) {
+    featuredPosts = await fetchApi<Post[]>({
+      endpoint:
+        "articles?fields[0]=title&fields[1]=description&fields[2]=pubDate&fields[3]=featured&fields[4]=slug&populate[cover][fields]=formats&populate[category][fields]=name",
+      wrappedByKey: "data",
+      method: "GET",
+      query: {
+        "pagination[page]": 1,
+        "pagination[pageSize]": 6,
+        sort: "pubDate:desc",
+        "filters[featured][$eq]": true,
+      },
+    });
+    // Guardar en Redis con expiración de 12 horas
+    await client.set("featuredPosts", JSON.stringify(featuredPosts), {
+      EX: 60 * 60 * 12,
+    });
+  } else {
+    featuredPosts = JSON.parse(data);
+  }
+} catch (error) {
+  console.error("Error al obtener los artículos:", error);
+}
+
+if (featuredPosts.length === 0) return;
+
+// Función para optimizar la URL de la imagen
+const optimizedImageUrl = (url: string, width: number, height: number) =>
+  `${url}?f_auto,q_auto,w_${width},h_${height}`;
+
+// Mapear las imágenes optimizadas
+const featuredPostsImage = featuredPosts.map((article) => ({
+  ...article,
+  coverUrl: {
+    small: optimizedImageUrl(article.cover.formats.small.url, 500, 391),
+  },
+}));
+
+if (featuredPostsImage.length === 0) return;
 ---
 
 <section
@@ -27,7 +69,7 @@ const featuredPosts = allFeaturedPosts.sort(
     </h2>
     <div class="grid gap-6 lg:grid-cols-3">
       {
-        featuredPosts.map(
+        featuredPostsImage.map(
           ({
             coverUrl: { small },
             cover: {
