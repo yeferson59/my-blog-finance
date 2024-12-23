@@ -1,0 +1,124 @@
+---
+// src/pages/projects.astro
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { Button } from "@/components/ui/button";
+import { Image } from "astro:assets";
+import { client } from "@/utils/redis";
+import fetchApi from "@/lib/strapi";
+
+interface Project {
+  title: string;
+  description: string;
+  image: {
+    url: string;
+  };
+  tags: string[];
+  link: string;
+}
+
+if (!client.isOpen) {
+  client
+    .connect()
+    .catch((err) => console.error("Error al conectar con Redis:", err));
+}
+
+let projects: Project[] = [];
+
+try {
+  // Intentar obtener los datos desde Redis
+  const cachedData = await client.get("projects");
+  if (cachedData) {
+    projects = JSON.parse(cachedData);
+    console.log(`Cargando datos cacheados para projects`);
+    console.log(projects);
+  } else {
+    // Si no está en cache, obtener datos desde la API
+    projects = await fetchApi<Project[]>({
+      endpoint: "projects",
+      method: "GET",
+      wrappedByKey: "data",
+      query: {
+        populate: "image",
+        "pagination[page]": 1,
+        "pagination[pageSize]": 12,
+      },
+    });
+
+    if (projects) {
+      // Guardar datos en Redis con expiración de 6 horas
+      await client.set("projects", JSON.stringify(projects), {
+        EX: 60 * 60 * 6,
+      });
+    }
+  }
+} catch (error) {
+  console.error("Error al obtener datos de los proyectos:", error);
+  throw new Error("Error fetching data");
+}
+
+// Si no se obtuvieron datos, retornar
+if (!projects) return;
+---
+
+<BaseLayout title="My Projects" imageUrl="">
+  <main class="min-h-screen bg-gray-50 dark:bg-gray-950">
+    <div class="container mx-auto px-4 py-16">
+      <h1
+        class="text-4xl font-bold mb-12 text-center text-gray-900 dark:text-white"
+      >
+        Mis proyectos
+      </h1>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {
+          projects.map((project) => (
+            <div class="bg-white dark:bg-gray-900 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-800 hover:border-primary-500 dark:hover:border-blue-500 transition-colors duration-300 shadow-lg">
+              <div class="aspect-video relative bg-gray-100 dark:bg-gray-800">
+                <Image
+                  src={project.image.url}
+                  alt={project.title}
+                  width={600}
+                  height={400}
+                  class="w-full h-full object-cover opacity-100 dark:opacity-80"
+                />
+              </div>
+              <div class="p-6">
+                <h2 class="text-2xl font-semibold mb-2 text-gray-900 dark:text-white">
+                  {project.title}
+                </h2>
+                <p class="text-gray-600 dark:text-gray-400 mb-4 min-h-[3rem]">
+                  {project.description}
+                </p>
+                <div class="flex flex-wrap gap-2 mb-4">
+                  {project.tags.map((tag) => (
+                    <span class="bg-primary-100 dark:bg-blue-900/50 text-primary-800 dark:text-blue-300 text-xs font-medium px-2.5 py-0.5 rounded border border-primary-200 dark:border-blue-800">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+                <a
+                  href={project.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="block w-full"
+                >
+                  <Button
+                    variant="outline"
+                    className="w-full bg-white hover:bg-gray-50 dark:bg-transparent dark:hover:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-300 hover:text-primary-600 dark:hover:text-white transition-colors duration-300"
+                  >
+                    View Project
+                  </Button>
+                </a>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .aspect-video {
+    aspect-ratio: 16 / 9;
+  }
+</style>
