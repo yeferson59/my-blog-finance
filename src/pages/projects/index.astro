@@ -32,7 +32,6 @@ try {
   if (cachedData) {
     projects = JSON.parse(cachedData);
     console.log(`Cargando datos cacheados para projects`);
-    console.log(projects);
   } else {
     // Si no está en cache, obtener datos desde la API
     projects = await fetchApi<Project[]>({
