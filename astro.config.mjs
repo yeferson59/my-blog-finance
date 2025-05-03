@@ -10,10 +10,6 @@ export default defineConfig({
 
   site: WEBSITE_DATA.siteUrl,
 
-  security: {
-    checkOrigin: true,
-  },
-
   output: "server",
 
   adapter: node({
@@ -23,7 +19,6 @@ export default defineConfig({
   vite: {
     plugins: [tailwindcss()],
     server: {
-      host: true,
       allowedHosts: ["my-blog-frontend-sunt1c6ktw.155.133.22.54.sslip.io"],
     },
   },
