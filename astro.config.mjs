@@ -24,9 +24,6 @@ export default defineConfig({
     plugins: [tailwindcss()],
     server: {
       host: true,
-      allowedHosts: [
-        "my-blog-frontend-dpl-dkr-kdihuc352bx-4b9lgacb1z.155.133.22.54.sslip.io",
-      ],
     },
   },
 });
