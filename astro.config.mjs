@@ -10,7 +10,8 @@ export default defineConfig({
   site: WEBSITE_DATA.siteUrl,
   output: "server",
   adapter: netlify({
-    imageCDN: true,
+    imageCDN: false,
+    cacheOnDemandPages: true,
   }),
   vite: {
     plugins: [tailwindcss()],
