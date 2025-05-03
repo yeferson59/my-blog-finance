@@ -28,9 +28,8 @@ export async function POST(context: APIContext): Promise<Response> {
     return Response.json({ message: "Incorrect passwords" }, { status: 400 });
   }
 
-  const rows = await sql("SELECT EMAIL FROM AUTH_USER WHERE EMAIL = $1;", [
-    data.email,
-  ]);
+  const rows =
+    await sql`SELECT EMAIL FROM AUTH_USER WHERE EMAIL = ${data.email};`;
 
   if (rows[0]) return context.redirect("/auth/signup", 301);
 
@@ -45,10 +44,9 @@ export async function POST(context: APIContext): Promise<Response> {
   const userId = generateIdFromEntropySize(10);
 
   try {
-    await sql(
-      "INSERT INTO AUTH_USER(ID, EMAIL, PASSWORD_HASH) VALUES($1, $2, $3);",
-      [userId, data.email, passwordHash],
-    );
+    await sql`
+      INSERT INTO AUTH_USER(ID, EMAIL, PASSWORD_HASH) VALUES(${userId}, ${data.email}, ${passwordHash});
+    `;
     const session = await lucia.createSession(userId, {});
     const sessionCookie = lucia.createSessionCookie(session.id);
     context.cookies.set(

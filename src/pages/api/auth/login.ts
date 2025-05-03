@@ -26,9 +26,7 @@ export async function POST(context: APIContext): Promise<Response> {
       { status: 400 },
     );
 
-  const rows = await sql("SELECT * FROM AUTH_USER WHERE EMAIL = $1;", [
-    data.email,
-  ]);
+  const rows = await sql`SELECT * FROM AUTH_USER WHERE EMAIL = ${data.email};`;
 
   if (!rows[0])
     return Response.json({ message: "Invalid credentials" }, { status: 400 });

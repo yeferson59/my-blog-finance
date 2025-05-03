@@ -25,9 +25,7 @@ export async function GET(context: APIContext): Promise<Response> {
   }
 
   try {
-    const articleData = await sql("SELECT * FROM ARTICLES WHERE ID = $1;", [
-      data,
-    ]);
+    const articleData = await sql`SELECT * FROM ARTICLES WHERE ID = ${data};`;
 
     if (articleData.length === 0) {
       return new Response("Article not found", { status: 404 });
@@ -35,22 +33,20 @@ export async function GET(context: APIContext): Promise<Response> {
 
     const documentId = articleData[0].document_id;
 
-    const articlesDocument = await sql(
-      "SELECT * FROM ARTICLES WHERE DOCUMENT_ID = $1 AND PUBLISHED_AT IS NULL;",
-      [documentId],
-    );
+    const articlesDocument = await sql`
+      SELECT * FROM ARTICLES WHERE DOCUMENT_ID = ${documentId} AND PUBLISHED_AT IS NULL;
+    `;
 
     if (articlesDocument.length === 0) {
       return new Response("Document not found", { status: 404 });
     }
 
-    const rows = await sql(
-      `SELECT COMMENT.*, AUTH_USER.username, AUTH_USER.email, AUTH_USER.avatar 
-       FROM COMMENT 
-       JOIN AUTH_USER ON COMMENT.user_id = AUTH_USER.id 
-       WHERE COMMENT.post_id = $1;`,
-      [articlesDocument[0].id],
-    );
+    const rows = await sql`
+      SELECT COMMENT.*, AUTH_USER.username, AUTH_USER.email, AUTH_USER.avatar
+      FROM COMMENT
+      JOIN AUTH_USER ON COMMENT.user_id = AUTH_USER.id
+      WHERE COMMENT.post_id = ${articlesDocument[0].id};
+    `;
 
     return new Response(JSON.stringify(rows), { status: 200, headers: header });
   } catch (err) {

@@ -44,10 +44,8 @@ export async function GET(context: APIContext): Promise<Response> {
     );
     const googleUser: GoogleUser = await googleUserResponse.data;
 
-    const rows = await sql(
-      "SELECT * FROM OAUTH_ACCOUNT WHERE (PROVIDER_ID = 'google') AND (PROVIDER_USER_ID = $1);",
-      [googleUser.sub],
-    );
+    const rows =
+      await sql`SELECT * FROM OAUTH_ACCOUNT WHERE (PROVIDER_ID = 'google') AND (PROVIDER_USER_ID = ${googleUser.sub});`;
 
     if (rows.length === 1) {
       const existingAccount = await oauthAccountSchema.parseAsync({
@@ -68,20 +66,9 @@ export async function GET(context: APIContext): Promise<Response> {
 
     const userId = generateIdFromEntropySize(10);
     await sql.transaction([
-      sql(
-        "INSERT INTO AUTH_USER(ID, USERNAME, EMAIL, EMAIL_VERIFIED, AVATAR) VALUES($1, $2, $3, $4, $5);",
-        [
-          userId,
-          googleUser.name,
-          googleUser.email,
-          googleUser.email_verified,
-          googleUser.picture,
-        ],
-      ),
-      sql(
-        "INSERT INTO OAUTH_ACCOUNT(PROVIDER_ID, PROVIDER_USER_ID, USER_ID) VALUES($1, $2, $3);",
-        ["google", googleUser.sub, userId],
-      ),
+      sql`INSERT INTO AUTH_USER(ID, USERNAME, EMAIL, EMAIL_VERIFIED, AVATAR) VALUES(${userId}, ${googleUser.name}, ${googleUser.email}, ${googleUser.email_verified}, ${googleUser.picture});`,
+
+      sql`INSERT INTO OAUTH_ACCOUNT(PROVIDER_ID, PROVIDER_USER_ID, USER_ID) VALUES('google', ${googleUser.sub}, ${userId});`,
     ]);
 
     const session = await lucia.createSession(userId, {});

@@ -32,10 +32,8 @@ export async function GET(context: APIContext): Promise<Response> {
     });
     const githubUser: GitHubUser = await githubUserResponse.json();
     // Replace this with your own DB client.
-    const rows = await sql(
-      "SELECT * FROM OAUTH_ACCOUNT WHERE (PROVIDER_ID = 'github') AND (PROVIDER_USER_ID = $1);",
-      [githubUser.id],
-    );
+    const rows = await sql`
+      SELECT * FROM OAUTH_ACCOUNT WHERE (PROVIDER_ID = 'github') AND (PROVIDER_USER_ID = ${githubUser.id})`;
 
     if (rows.length === 1) {
       const existingAccount = await oauthAccountSchema.parseAsync({
@@ -56,15 +54,8 @@ export async function GET(context: APIContext): Promise<Response> {
     const userId = generateIdFromEntropySize(10); // 16 characters long
 
     await sql.transaction([
-      sql("INSERT INTO AUTH_USER(ID, USERNAME, AVATAR) VALUES($1, $2, $3);", [
-        userId,
-        githubUser.login,
-        githubUser.avatar_url,
-      ]),
-      sql(
-        "INSERT INTO OAUTH_ACCOUNT(PROVIDER_ID, PROVIDER_USER_ID, USER_ID) VALUES($1, $2, $3);",
-        ["github", githubUser.id, userId],
-      ),
+      sql`INSERT INTO AUTH_USER(ID, USERNAME, AVATAR) VALUES(${userId}, ${githubUser.login}, ${githubUser.avatar_url})`,
+      sql`INSERT INTO OAUTH_ACCOUNT(PROVIDER_ID, PROVIDER_USER_ID, USER_ID) VALUES('github', ${githubUser.id}, ${userId});`,
     ]);
 
     const session = await lucia.createSession(userId, {});
