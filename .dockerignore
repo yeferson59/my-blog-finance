@@ -1,0 +1,27 @@
+# Directories
+node_modules/
+dist/
+.astro/
+.vscode/
+.netlify/
+
+# Files
+.env
+.env.*
+!.env.example
+.DS_Store
+Thumbs.db
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Exclude git directory
+.git/
+.gitignore
+
+# Exclude Docker files
+.dockerignore
+
+# Exclude TypeScript cache
+*.tsbuildinfo
