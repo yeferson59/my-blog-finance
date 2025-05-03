@@ -130,7 +130,7 @@ export function CommentSection({
               </AvatarFallback>
             </Avatar>
             <Textarea
-              className="flex-grow p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200"
+              className="grow p-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-2 focus:ring-primary-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200"
               rows={3}
               placeholder="Escribe un comentario..."
               value={newComment}
@@ -140,7 +140,7 @@ export function CommentSection({
           {error && <p className="text-red-500 mb-2">{error}</p>}
           <Button
             type="submit"
-            className="bg-primary-600 text-white py-2 px-4 rounded-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-opacity-50"
+            className="bg-primary-600 text-white py-2 px-4 rounded-md hover:bg-primary-700 focus:outline-hidden focus:ring-2 focus:ring-primary-500 focus:ring-opacity-50"
             disabled={loading}
           >
             {loading ? "Publicando..." : "Publicar Comentario"}
@@ -182,7 +182,7 @@ export function CommentSection({
       {comments.length > visibleComments && (
         <Button
           onClick={loadMoreComments}
-          className="mt-4 bg-secondary-500 text-white py-2 px-4 rounded-md hover:bg-secondary-600 focus:outline-none focus:ring-2 focus:ring-secondary-400 focus:ring-opacity-50"
+          className="mt-4 bg-secondary-500 text-white py-2 px-4 rounded-md hover:bg-secondary-600 focus:outline-hidden focus:ring-2 focus:ring-secondary-400 focus:ring-opacity-50"
         >
           Cargar más comentarios
         </Button>
